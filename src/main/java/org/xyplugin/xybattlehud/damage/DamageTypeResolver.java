@@ -10,6 +10,7 @@ import org.xyplugin.xybattlehud.config.PluginSettings;
 import java.util.List;
 import java.util.Locale;
 import java.util.OptionalDouble;
+import java.util.Set;
 
 public final class DamageTypeResolver {
     private static final String TYPE_METADATA = "xybattlehud.damage-type";
@@ -21,14 +22,15 @@ public final class DamageTypeResolver {
         this.attributes = attributes;
     }
 
-    public DamageType resolve(LivingEntity attacker, LivingEntity target, String apMessage, boolean directAttack) {
+    public DamageType resolve(LivingEntity attacker, LivingEntity target, String apMessage,
+                              Set<String> apTriggers, boolean directAttack) {
         DamageType metadata = metadataType(attacker, target);
         if (metadata != null) return metadata;
 
         String message = apMessage == null ? "" : apMessage.toLowerCase(Locale.ROOT);
         for (DamageType type : settings.getOrderedTypes()) {
             for (String trigger : type.getTriggers()) {
-                if (!trigger.isEmpty() && message.contains(trigger)) return type;
+                if (!trigger.isEmpty() && (message.contains(trigger) || apTriggers.contains(trigger))) return type;
             }
         }
         if (directAttack && attacker instanceof Player && isVanillaCritical((Player) attacker)) {
@@ -66,4 +68,3 @@ public final class DamageTypeResolver {
                 && !player.isSprinting();
     }
 }
-

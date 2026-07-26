@@ -2,7 +2,7 @@
 
 `XyBattleHud` 是面向 Paper/Spigot 1.12.2 的战斗伤害飘字插件。它将服务端计算出的伤害数值替换为罕见 Unicode 字符；安装了对应 DragonCore 客户端字体配置和 PNG 后，客户端会把这些字符绘制为伤害图片。
 
-本项目 `v1.0` 专注于一件事：按伤害类型使用不同字形显示伤害数字。
+本项目专注于一件事：按伤害类型使用不同字形显示伤害数字。
 
 ## 特性
 
@@ -10,7 +10,7 @@
 - 使用原生 `ArmorStand` 显示、上浮并自动清理伤害数字，兼容 1.12.2。
 - 伤害类型完全由 `config.yml -> damage-types` 配置，不包含不同权限组字体功能。
 - 默认支持普通伤害与暴击伤害两套字形。
-- 可用 AttributePlus 的本次攻击消息、攻击者属性和原版下落暴击判断识别类型。
+- 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
 - 支持第三方通过实体 metadata `xybattlehud.damage-type` 指定已配置类型。
 
@@ -57,7 +57,7 @@ AttributePlus / Bukkit 伤害事件
 `damage-types` 中每个类型包含：
 
 - `priority`：多个属性同时成立时，较大值优先。
-- `triggers`：匹配 AttributePlus 当前攻击消息的关键词，例如 `暴击`。
+- `triggers`：匹配 AttributePlus 本次实际触发的属性 ID/名称，也兼容攻击消息关键词。例如 AP 暴击触发 ID 为 `crit`。
 - `attributes`：攻击者该 AP 属性大于 `attribute.threshold` 时命中。适合撕裂伤害、钝击伤害等可持续读取的属性。
 - `vanilla-critical`：为 `true` 时可匹配原版下落暴击。
 - `digits`：必须正好十项，依次对应 `0` 到 `9`。
@@ -78,7 +78,7 @@ damage-types:
     symbols: {}
 ```
 
-把 `字形0` 到 `字形9` 替换成实际配置在 DragonCore 字体文件内的单个字符即可。若 AP 的“伤害属性”只是常驻加成，属性回退会把整次命中归类为该类型；需要精确的本次触发识别时，应设置对应 `triggers`，让它匹配 AttributePlus 的本次攻击消息。
+把 `字形0` 到 `字形9` 替换成实际配置在 DragonCore 字体文件内的单个字符即可。若 AP 的“伤害属性”只是常驻加成，属性回退会把整次命中归类为该类型；需要精确的本次触发识别时，应把 AP 属性的触发 ID 写入 `triggers`。
 
 ## 命令
 
@@ -107,9 +107,8 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.0.jar`。
+产物：`build/libs/XyBattleHud-1.0.1.jar`。
 
 ## 许可证
 
 暂未声明许可证。发布或分发前请由仓库维护者补充明确许可证。
-

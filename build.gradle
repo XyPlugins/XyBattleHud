@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.xyplugin'
-version = '1.0'
+version = '1.0.1'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -31,4 +31,3 @@ jar {
         attributes('Implementation-Title': 'XyBattleHud', 'Implementation-Version': project.version)
     }
 }
-

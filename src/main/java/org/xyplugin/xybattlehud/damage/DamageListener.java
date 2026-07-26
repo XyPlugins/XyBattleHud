@@ -35,15 +35,18 @@ public final class DamageListener implements Listener {
         double damage = pending != null && pending.getDamage() > 0.0 ? pending.getDamage() : event.getFinalDamage();
         if (damage < settings.getMinDamage()) return;
         String message = pending == null ? "" : pending.getMessage();
+        java.util.Set<String> apTriggers = pending == null
+                ? java.util.Collections.<String>emptySet() : pending.getTriggers();
         boolean direct = event.getDamager() instanceof Player;
-        DamageType type = plugin.getResolver().resolve(attacker, target, message, direct);
+        DamageType type = plugin.getResolver().resolve(attacker, target, message, apTriggers, direct);
         String number = DamageNumberFormatter.format(damage, settings.getDecimalPlaces(), settings.getThousandsSeparator());
         String text = type.getColor() + type.getPrefix()
                 + FontMapper.map(number, type.getDigits(), type.getSymbols()) + type.getSuffix();
         plugin.getHolograms().show(target, text);
         if (plugin.isDebugEnabled()) {
             plugin.getLogger().info("伤害: " + attacker.getName() + " -> " + target.getName()
-                    + ", value=" + damage + ", type=" + type.getId() + ", apMessage=" + message);
+                    + ", value=" + damage + ", type=" + type.getId()
+                    + ", apTriggers=" + apTriggers + ", apMessage=" + message);
         }
     }
 
@@ -56,4 +59,3 @@ public final class DamageListener implements Listener {
         return null;
     }
 }
-

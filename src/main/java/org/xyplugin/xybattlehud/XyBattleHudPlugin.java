@@ -39,7 +39,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
             pluginCommand.setExecutor(command);
             pluginCommand.setTabCompleter(command);
         }
-        getLogger().info("XyBattleHud 1.0 已启用，属性来源: " + attributeReader.getName());
+        getLogger().info("XyBattleHud " + getDescription().getVersion() + " 已启用，属性来源: " + attributeReader.getName());
     }
 
     @Override
@@ -69,4 +69,3 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     public boolean isDebugEnabled() { return runtimeDebug || (settings != null && settings.isDebug()); }
     public void setRuntimeDebug(boolean runtimeDebug) { this.runtimeDebug = runtimeDebug; }
 }
-

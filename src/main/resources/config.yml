@@ -1,4 +1,4 @@
-# XyBattleHud 1.0
+# XyBattleHud 1.0.1
 # 插件只发送字符；字符对应的 PNG 由玩家客户端 DragonCore 字体配置负责。
 
 display:
@@ -27,7 +27,8 @@ attribute:
   threshold: 0.0
 
 # damage-types 可增加任意类型，不存在权限字体组。
-# triggers 匹配 AttributePlus 本次攻击消息；attributes 读取攻击者的 AP 属性。
+# triggers 匹配 AttributePlus 本次实际触发的属性 ID/名称，也兼容攻击消息关键词。
+# attributes 读取攻击者的常驻 AP 属性，不适合用来判断暴击是否触发。
 damage-types:
   normal:
     priority: 0
@@ -40,7 +41,8 @@ damage-types:
   critical:
     priority: 100
     vanilla-critical: true
-    triggers: ['暴击', 'critical', 'crit']
+    # AP 中 crit 是“暴击几率”的触发 ID；只有本次真正暴击才会匹配。
+    triggers: ['crit', '暴击']
     attributes: []
     color: '&f'
     prefix: '闊'
@@ -53,4 +55,3 @@ damage-types:
 
 default-type: normal
 debug: false
-

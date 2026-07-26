@@ -1,5 +1,5 @@
 name: XyBattleHud
-version: '1.0'
+version: '1.0.1'
 main: org.xyplugin.xybattlehud.XyBattleHudPlugin
 api-version: '1.12'
 author: XyPlugin
@@ -15,4 +15,3 @@ permissions:
   xybattlehud.admin:
     description: 允许管理 XyBattleHud
     default: op
-
