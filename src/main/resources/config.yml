@@ -1,0 +1,56 @@
+# XyBattleHud 1.0
+# 插件只发送字符；字符对应的 PNG 由玩家客户端 DragonCore 字体配置负责。
+
+display:
+  # 显示时长，20 tick = 1 秒。
+  duration-ticks: 40
+  height-offset: 0.45
+  float-speed: 0.025
+  random-offset: 0.35
+  max-holograms: 100
+
+number:
+  # 默认显示整数，避免客户端字体未配置小数点时出现原版字符。
+  decimal-places: 0
+  thousands-separator: ''
+  min-damage: 0.1
+
+filter:
+  ignore-self-damage: true
+  ignored-worlds: []
+  ignored-entity-types: [ARMOR_STAND]
+
+attribute:
+  # 安装 XyCore 时优先使用其 AttributeService，否则直连 AttributePlus。
+  prefer-xycore: true
+  # 属性值大于此数值时，认为对应类型有效；按类型 priority 从高到低选择。
+  threshold: 0.0
+
+# damage-types 可增加任意类型，不存在权限字体组。
+# triggers 匹配 AttributePlus 本次攻击消息；attributes 读取攻击者的 AP 属性。
+damage-types:
+  normal:
+    priority: 0
+    color: '&f'
+    prefix: ''
+    suffix: ''
+    digits: ['鳀', '霕', '顬', '櫠', '螱', '藁', '黉', '镛', '铴', '韮']
+    symbols: {}
+
+  critical:
+    priority: 100
+    vanilla-critical: true
+    triggers: ['暴击', 'critical', 'crit']
+    attributes: []
+    color: '&f'
+    prefix: '闊'
+    suffix: ''
+    digits: ['騜', '巟', '獚', '奛', '兤', '榥', '宺', '鎤', '琥', '怳']
+    symbols: {}
+
+# 撕裂/钝击示例：准备好对应 PNG 和生僻字后，复制 critical 段并修改名称、
+# triggers、attributes、digits 即可。例如 attributes: ['撕裂伤害']。
+
+default-type: normal
+debug: false
+

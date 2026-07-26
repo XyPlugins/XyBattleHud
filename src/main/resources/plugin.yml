@@ -1,0 +1,18 @@
+name: XyBattleHud
+version: '1.0'
+main: org.xyplugin.xybattlehud.XyBattleHudPlugin
+api-version: '1.12'
+author: XyPlugin
+description: Attribute damage holograms with client font glyph mapping
+softdepend: [XyCore, AttributePlus, PlaceholderAPI]
+
+commands:
+  xybh:
+    description: XyBattleHud 管理命令
+    usage: /xybh <reload|info|clear|debug>
+
+permissions:
+  xybattlehud.admin:
+    description: 允许管理 XyBattleHud
+    default: op
+
