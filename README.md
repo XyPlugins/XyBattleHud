@@ -1,8 +1,8 @@
 # XyBattleHud
 
-`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的战斗伤害飘字插件。它将服务端计算出的伤害数值替换为罕见 Unicode 字符；安装了对应 DragonCore 客户端字体配置和 PNG 后，客户端会把这些字符绘制为伤害图片。
+`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore WorldTexture 显示。
 
-本项目专注于一件事：按伤害类型使用不同字形显示伤害数字。
+当前版本专注于伤害类型字形和连击显示，不包含怪物血条等无关功能。
 
 ## 特性
 
@@ -10,6 +10,10 @@
 - 使用原生 `ArmorStand` 显示、上浮并自动清理伤害数字，兼容 1.12.2。
 - 伤害类型完全由 `config.yml -> damage-types` 配置，不包含不同权限组字体功能。
 - 默认支持普通伤害与暴击伤害两套字形。
+- 同一玩家连续攻击同一目标时显示连击数，切换目标或超时后重置。
+- 普攻连击使用 `连击数_1.png`，暴击连击使用 `连击数_2.png`，数字排列在样式图片前面。
+- 连击位置、数字大小、样式图片大小可配置，计数最大为 `999`。
+- 连击采用 DragonCore WorldTexture，不使用 ArmorStand 名称，因此没有字体图片黑底。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
 - 支持第三方通过实体 metadata `xybattlehud.damage-type` 指定已配置类型。
@@ -20,14 +24,16 @@
 - Paper/Spigot 1.12.2。
 - 可选：AttributePlus，默认属性来源。
 - 可选：XyCore。仅作为稳定的 AttributePlus 读取桥，不是硬依赖。
-- 客户端可选：DragonCore 字体配置与相应 PNG。XyBattleHud 不读取 DragonCore 文件，也不调用 DragonCore API。
+- DragonCore：伤害字体映射本身不要求服务端 API；启用连击图片显示时必须安装。
+- 客户端：DragonCore 字体配置、伤害数字 PNG 和连击 PNG。
 
 ## 安装
 
-1. 将 `XyBattleHud-1.0.jar` 放入服务端 `plugins` 目录并重启。
-2. 将 DragonCore 字体定义放入客户端实际加载的字体配置中。字形定义位置由 DragonCore/资源包决定，不是本插件目录。
-3. 确认 [config.yml](src/main/resources/config.yml) 中每一位 `digits` 都与 DragonCore 字体配置里的字符一致。
-4. 使用 `/xybh info` 检查属性来源与 AttributePlus 事件状态。
+1. 将 `XyBattleHud-1.1.0.jar` 放入服务端 `plugins` 目录并重启。
+2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
+3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
+4. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符和 `combo.images` 图片路径与客户端资源一致。
+5. 使用 `/xybh info` 检查属性来源、AttributePlus 事件和龙核连击状态。
 
 默认字形采用已验证的艾尔字体字符：
 
@@ -49,6 +55,8 @@ AttributePlus / Bukkit 伤害事件
 ```
 
 服务端不知道 PNG 的路径。DragonCore 在客户端已经注册了字符到图片的映射后，普通聊天、实体名和全息字里出现相同字符都会使用该图片字形。这就是插件无需 DragonCore API 也能显示图片数字的原因。
+
+连击与伤害数字不同。连击需要控制多个独立图片的位置和大小，因此服务端通过 DragonCore `CoreAPI.setPlayerWorldTexture` 发送数字 PNG 与样式 PNG 的路径。它不会读取客户端文件；客户端收到路径后自行加载对应图片。
 
 ## 配置
 
@@ -80,12 +88,24 @@ damage-types:
 
 把 `字形0` 到 `字形9` 替换成实际配置在 DragonCore 字体文件内的单个字符即可。若 AP 的“伤害属性”只是常驻加成，属性回退会把整次命中归类为该类型；需要精确的本次触发识别时，应把 AP 属性的触发 ID 写入 `triggers`。
 
+### 连击配置
+
+- `enabled`：是否启用连击。
+- `timeout-ticks`：两次命中允许间隔的时间，默认 40 tick，即 2 秒。
+- `display-from`：从第几击开始显示，默认第 2 击。
+- `max-count`：可调低，但无论配置如何都不会超过 `999`。
+- `position`：连击整体相对目标的位置。
+- `size`：数字和样式图片的宽高，单位为方块。
+- `images`：数字图片文件夹以及 `连击数_1.png`、`连击数_2.png` 的客户端路径。
+
+每次命中只保留攻击者最新的一组连击贴图。插件只向同世界 32 格内玩家发送，最多发送三位数字和一张样式图；所有连击共用一个清理任务。
+
 ## 命令
 
 所有命令需要 `xybattlehud.admin`，默认为 OP。
 
 - `/xybh reload`：重新读取配置并重新连接可选依赖。
-- `/xybh info`：查看版本、属性来源、AP 事件桥和当前飘字数量。
+- `/xybh info`：查看版本、属性来源、AP 事件桥、DragonCore 连击接口和当前显示数量。
 - `/xybh clear`：清除当前全部飘字。
 - `/xybh debug [on|off]`：临时输出每次伤害的数值、类型和 AP 消息。重载后恢复配置值。
 
@@ -95,9 +115,10 @@ XyCore 是软依赖，不能阻止 XyBattleHud 启动。它提供 `XyCore.get().
 
 ## 已知范围
 
-- v1 不包含怪物血条、原版伤害粒子压缩、玩家隐藏设置、权限字体组、ProtocolLib 虚拟实体或其他属性插件适配。
-- 原生 ArmorStand 的可见距离由服务端实体追踪范围控制；v1 不发送自定义数据包。
+- 当前版本不包含怪物血条、原版伤害粒子压缩、玩家隐藏设置、权限字体组、ProtocolLib 虚拟实体或其他属性插件适配。
+- 伤害数字仍由原生 ArmorStand 显示，其可见距离由服务端实体追踪范围控制。
 - 没有配置的小数点、千位分隔符会以原版字体显示，因此默认禁用小数和分组符号。
+- DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击图片不会显示。
 
 ## 构建
 
@@ -107,7 +128,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.0.1.jar`。
+产物：`build/libs/XyBattleHud-1.1.0.jar`。
 
 ## 许可证
 

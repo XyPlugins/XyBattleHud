@@ -1,10 +1,10 @@
 name: XyBattleHud
-version: '1.0.1'
+version: '1.1.0'
 main: org.xyplugin.xybattlehud.XyBattleHudPlugin
 api-version: '1.12'
 author: XyPlugin
 description: Attribute damage holograms with client font glyph mapping
-softdepend: [XyCore, AttributePlus, PlaceholderAPI]
+softdepend: [XyCore, AttributePlus, PlaceholderAPI, DragonCore]
 
 commands:
   xybh:

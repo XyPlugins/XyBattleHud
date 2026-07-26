@@ -40,11 +40,12 @@ public final class BattleHudCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(PREFIX + ChatColor.WHITE + "v" + plugin.getDescription().getVersion()
                         + ChatColor.GRAY + " | 属性来源: " + plugin.getAttributeReader().getName()
                         + " | AP事件: " + (plugin.getAttributePlusBridge().isAvailable() ? "可用" : "不可用")
-                        + " | 飘字: " + plugin.getHolograms().size());
+                        + " | 龙核连击: " + (plugin.getComboDisplays().isAvailable() ? "可用" : "不可用")
+                        + " | 显示: " + (plugin.getHolograms().size() + plugin.getComboDisplays().size()));
                 return true;
             case "clear":
-                plugin.getHolograms().clear();
-                sender.sendMessage(PREFIX + ChatColor.GREEN + "已清除全部伤害飘字。");
+                plugin.clearDisplays();
+                sender.sendMessage(PREFIX + ChatColor.GREEN + "已清除伤害飘字和连击显示。");
                 return true;
             case "debug":
                 boolean enabled = args.length < 2 ? !plugin.isDebugEnabled() : "on".equalsIgnoreCase(args[1]);
@@ -68,4 +69,3 @@ public final class BattleHudCommand implements CommandExecutor, TabCompleter {
         return result;
     }
 }
-

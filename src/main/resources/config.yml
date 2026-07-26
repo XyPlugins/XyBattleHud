@@ -1,57 +1,114 @@
-# XyBattleHud 1.0.1
-# 插件只发送字符；字符对应的 PNG 由玩家客户端 DragonCore 字体配置负责。
+# XyBattleHud 1.1.0
+# 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
+# 伤害数字显示设置。
 display:
   # 显示时长，20 tick = 1 秒。
   duration-ticks: 40
+  # 相对受击目标眼睛的高度。
   height-offset: 0.45
+  # 每 tick 向上移动的距离。
   float-speed: 0.025
+  # 随机散开范围，填 0 表示不随机。
   random-offset: 0.35
+  # 同时存在的伤害飘字上限。
   max-holograms: 100
 
+# 伤害数值格式。
 number:
-  # 默认显示整数，避免客户端字体未配置小数点时出现原版字符。
+  # 小数位数。默认整数，避免未配置小数点图片时出现原版字符。
   decimal-places: 0
+  # 千位分隔符，留空表示关闭。
   thousands-separator: ''
+  # 低于该数值的伤害不显示。
   min-damage: 0.1
 
+# 连击设置。使用 DragonCore WorldTexture，因此没有 ArmorStand 黑底。
+combo:
+  # 是否启用连击。
+  enabled: true
+  # 两次命中最多间隔多久，40 tick = 2 秒。
+  timeout-ticks: 40
+  # 从第几连击开始显示。
+  display-from: 2
+  # 最大连击数，达到 999 后不再增加。
+  max-count: 999
+
+  # 连击整体位置：x 为左右，y 为上下，z 为前后。
+  position:
+    x: 0.65
+    y: 0.20
+    z: 0.0
+
+  # 连击数字和样式图片大小，单位为方块。
+  size:
+    number-width: 0.10
+    number-height: 0.14
+    label-width: 0.22
+    label-height: 0.12
+    # 数字与图片之间的间距。
+    spacing: 0.01
+
+  # DragonCore 客户端图片路径。
+  images:
+    # 普攻连击数字 0-9 所在文件夹。
+    normal-digits-folder: '战斗视图/艾尔字体/普通伤害'
+    # 暴击连击数字 0-9 所在文件夹。
+    critical-digits-folder: '战斗视图/艾尔字体/暴击伤害'
+    # 普攻使用连击数_1，暴击使用连击数_2。
+    normal-label: '战斗视图/伤害字体/连击数_1.png'
+    critical-label: '战斗视图/伤害字体/连击数_2.png'
+
+# 过滤设置。
 filter:
+  # 是否忽略玩家对自己的伤害。
   ignore-self-damage: true
+  # 不显示伤害的世界，默认不限制。
   ignored-worlds: []
+  # 不显示伤害的实体类型。
   ignored-entity-types: [ARMOR_STAND]
 
+# AttributePlus 接入设置。
 attribute:
-  # 安装 XyCore 时优先使用其 AttributeService，否则直连 AttributePlus。
+  # 安装 XyCore 时优先使用其属性接口，否则直接读取 AttributePlus。
   prefer-xycore: true
-  # 属性值大于此数值时，认为对应类型有效；按类型 priority 从高到低选择。
+  # 常驻属性值大于该数值时才算匹配。
   threshold: 0.0
 
-# damage-types 可增加任意类型，不存在权限字体组。
-# triggers 匹配 AttributePlus 本次实际触发的属性 ID/名称，也兼容攻击消息关键词。
-# attributes 读取攻击者的常驻 AP 属性，不适合用来判断暴击是否触发。
+# 伤害类型。triggers 匹配 AP 本次实际触发的属性 ID/名称。
+# attributes 读取常驻属性，不适合用来判断暴击是否触发。
 damage-types:
+  # 普通伤害。
   normal:
+    # 多个类型同时成立时，优先级高的类型胜出。
     priority: 0
     color: '&f'
     prefix: ''
     suffix: ''
+    # 依次对应数字 0 到 9，必须正好填写 10 项。
     digits: ['鳀', '霕', '顬', '櫠', '螱', '藁', '黉', '镛', '铴', '韮']
+    # 其他字符映射，例如小数点；默认不用。
     symbols: {}
 
+  # 暴击伤害。
   critical:
     priority: 100
+    # 是否把原版跳劈也识别为暴击。
     vanilla-critical: true
-    # AP 中 crit 是“暴击几率”的触发 ID；只有本次真正暴击才会匹配。
+    # crit 是 AP“暴击几率”的本次触发 ID。
     triggers: ['crit', '暴击']
+    # 保持为空，避免拥有暴击几率时每一击都显示暴击。
     attributes: []
     color: '&f'
+    # 暴击图片前缀字符。
     prefix: '闊'
     suffix: ''
+    # 暴击数字 0 到 9。
     digits: ['騜', '巟', '獚', '奛', '兤', '榥', '宺', '鎤', '琥', '怳']
     symbols: {}
 
-# 撕裂/钝击示例：准备好对应 PNG 和生僻字后，复制 critical 段并修改名称、
-# triggers、attributes、digits 即可。例如 attributes: ['撕裂伤害']。
-
+# 未匹配到其他类型时使用普通伤害。
 default-type: normal
+
+# 是否在控制台输出伤害类型、AP 触发项和连击数。
 debug: false

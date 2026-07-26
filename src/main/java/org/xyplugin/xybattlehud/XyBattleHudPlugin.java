@@ -6,6 +6,8 @@ import org.xyplugin.xybattlehud.attribute.AttributePlusEventBridge;
 import org.xyplugin.xybattlehud.attribute.AttributeReader;
 import org.xyplugin.xybattlehud.attribute.AttributeReaders;
 import org.xyplugin.xybattlehud.command.BattleHudCommand;
+import org.xyplugin.xybattlehud.combo.ComboDisplayManager;
+import org.xyplugin.xybattlehud.combo.ComboTracker;
 import org.xyplugin.xybattlehud.config.PluginSettings;
 import org.xyplugin.xybattlehud.damage.DamageListener;
 import org.xyplugin.xybattlehud.damage.DamageTypeResolver;
@@ -17,6 +19,8 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     private AttributePlusEventBridge attributePlusBridge;
     private DamageTypeResolver resolver;
     private HologramManager holograms;
+    private ComboTracker comboTracker;
+    private ComboDisplayManager comboDisplays;
     private boolean runtimeDebug;
 
     @Override
@@ -31,6 +35,8 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         }
         attributePlusBridge = new AttributePlusEventBridge(this);
         holograms = new HologramManager(this);
+        comboTracker = new ComboTracker(settings.getCombo().getTimeoutTicks(), settings.getCombo().getMaxCount());
+        comboDisplays = new ComboDisplayManager(this);
         reloadServices();
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         BattleHudCommand command = new BattleHudCommand(this);
@@ -45,6 +51,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (holograms != null) holograms.shutdown();
+        if (comboDisplays != null) comboDisplays.shutdown();
     }
 
     public void reloadPlugin() {
@@ -52,6 +59,9 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         PluginSettings next = PluginSettings.load(getConfig());
         settings = next;
         runtimeDebug = false;
+        comboTracker.clear();
+        comboTracker = new ComboTracker(settings.getCombo().getTimeoutTicks(), settings.getCombo().getMaxCount());
+        comboDisplays.reload();
         reloadServices();
     }
 
@@ -66,6 +76,14 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     public AttributePlusEventBridge getAttributePlusBridge() { return attributePlusBridge; }
     public DamageTypeResolver getResolver() { return resolver; }
     public HologramManager getHolograms() { return holograms; }
+    public ComboTracker getComboTracker() { return comboTracker; }
+    public ComboDisplayManager getComboDisplays() { return comboDisplays; }
+
+    public void clearDisplays() {
+        holograms.clear();
+        comboDisplays.clear();
+        comboTracker.clear();
+    }
     public boolean isDebugEnabled() { return runtimeDebug || (settings != null && settings.isDebug()); }
     public void setRuntimeDebug(boolean runtimeDebug) { this.runtimeDebug = runtimeDebug; }
 }

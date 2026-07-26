@@ -30,6 +30,7 @@ public final class PluginSettings {
     private final Set<EntityType> ignoredEntityTypes;
     private final boolean preferXyCore;
     private final double attributeThreshold;
+    private final ComboSettings combo;
     private final Map<String, DamageType> types;
     private final List<DamageType> orderedTypes;
     private final DamageType defaultType;
@@ -49,6 +50,7 @@ public final class PluginSettings {
         ignoredEntityTypes = parseEntityTypes(config.getStringList("filter.ignored-entity-types"));
         preferXyCore = config.getBoolean("attribute.prefer-xycore", true);
         attributeThreshold = config.getDouble("attribute.threshold", 0.0);
+        combo = ComboSettings.load(config);
         debug = config.getBoolean("debug", false);
 
         Map<String, DamageType> loaded = loadTypes(config.getConfigurationSection("damage-types"));
@@ -124,9 +126,9 @@ public final class PluginSettings {
     public Set<EntityType> getIgnoredEntityTypes() { return ignoredEntityTypes; }
     public boolean isPreferXyCore() { return preferXyCore; }
     public double getAttributeThreshold() { return attributeThreshold; }
+    public ComboSettings getCombo() { return combo; }
     public Map<String, DamageType> getTypes() { return types; }
     public List<DamageType> getOrderedTypes() { return orderedTypes; }
     public DamageType getDefaultType() { return defaultType; }
     public boolean isDebug() { return debug; }
 }
-

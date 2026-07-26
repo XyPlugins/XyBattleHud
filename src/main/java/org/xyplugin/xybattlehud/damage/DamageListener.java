@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.xyplugin.xybattlehud.XyBattleHudPlugin;
 import org.xyplugin.xybattlehud.attribute.AttributePlusEventBridge;
@@ -39,6 +40,14 @@ public final class DamageListener implements Listener {
                 ? java.util.Collections.<String>emptySet() : pending.getTriggers();
         boolean direct = event.getDamager() instanceof Player;
         DamageType type = plugin.getResolver().resolve(attacker, target, message, apTriggers, direct);
+        int combo = 0;
+        if (settings.getCombo().isEnabled()) {
+            combo = plugin.getComboTracker().record(attacker.getUniqueId(), target.getUniqueId(),
+                    System.currentTimeMillis());
+            if (combo >= settings.getCombo().getDisplayFrom()) {
+                plugin.getComboDisplays().show(attacker, target, combo, "critical".equals(type.getId()));
+            }
+        }
         String number = DamageNumberFormatter.format(damage, settings.getDecimalPlaces(), settings.getThousandsSeparator());
         String text = type.getColor() + type.getPrefix()
                 + FontMapper.map(number, type.getDigits(), type.getSymbols()) + type.getSuffix();
@@ -46,8 +55,14 @@ public final class DamageListener implements Listener {
         if (plugin.isDebugEnabled()) {
             plugin.getLogger().info("伤害: " + attacker.getName() + " -> " + target.getName()
                     + ", value=" + damage + ", type=" + type.getId()
-                    + ", apTriggers=" + apTriggers + ", apMessage=" + message);
+                    + ", combo=" + combo + ", apTriggers=" + apTriggers + ", apMessage=" + message);
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.getComboTracker().remove(event.getPlayer().getUniqueId());
+        plugin.getComboDisplays().remove(event.getPlayer().getUniqueId());
     }
 
     private Player attacker(Entity damager) {
