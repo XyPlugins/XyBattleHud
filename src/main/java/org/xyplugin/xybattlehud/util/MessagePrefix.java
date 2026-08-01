@@ -11,6 +11,15 @@ public final class MessagePrefix {
     }
 
     public static String resolve(JavaPlugin plugin) {
+        return resolvePlayer(plugin);
+    }
+
+    public static String resolveLocal(JavaPlugin plugin) {
+        String prefix = plugin.getConfig().getString("messages.prefix", "&7[&bXyBattleHud&7]&r ");
+        return ChatColor.translateAlternateColorCodes('&', prefix == null ? "" : prefix);
+    }
+
+    public static String resolvePlayer(JavaPlugin plugin) {
         String corePrefix = xyCorePrefix();
         String prefix = corePrefix == null
                 ? plugin.getConfig().getString("messages.prefix", "&7[&bXyBattleHud&7]&r ")

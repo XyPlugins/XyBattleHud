@@ -70,6 +70,6 @@ public final class BattleHudCommand implements CommandExecutor, TabCompleter {
     }
 
     private String prefix() {
-        return MessagePrefix.resolve(plugin);
+        return MessagePrefix.resolveLocal(plugin);
     }
 }

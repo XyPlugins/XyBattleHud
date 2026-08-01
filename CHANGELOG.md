@@ -1,5 +1,12 @@
 # 更新记录
 
+## v1.1.2 - 2026-08-02
+
+- 按服主最终确认收回 `/xybh` 命令前缀：help、reload、info、clear、debug 和权限不足全部保留 XyBattleHud 自身前缀。
+- 保留 `MessagePrefix.resolvePlayer` 作为未来玩家玩法聊天提示的可选入口，但当前 BattleHud 没有需要展示给玩家的系统玩法结果。
+- 本次不改变伤害飘字、连击 WorldTexture、AttributePlus 事件桥、ActionBar、Title 和战斗显示性能。
+- 更新 README、AI 使用记录、AI 更新记录和版本号。
+
 ## v1.1.1 - 2026-08-02
 
 - 命令聊天反馈前缀改为优先读取XyCore 0.3.11+ 的 `messages.prefix`。

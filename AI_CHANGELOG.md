@@ -2,6 +2,13 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-02 - v1.1.2 前缀语义修正
+
+- 根据服主最终确认，`/xybh` 属于管理/排错命令，应保留 XyBattleHud 自身前缀。
+- 将命令类前缀切换为 `MessagePrefix.resolveLocal(plugin)`。
+- 保留 `resolvePlayer` 用于未来新增玩家玩法提示；当前战斗HUD显示不走聊天前缀。
+- 不修改伤害飘字、连击贴图、AP事件桥或DragonCore显示逻辑。
+
 ## 2026-08-02 - v1.1.1 XyCore玩家前缀
 
 - 根据服主确认的“可独立插件无XyCore时使用自己前缀”规则，AI辅助新增 `MessagePrefix` 工具。
