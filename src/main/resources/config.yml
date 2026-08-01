@@ -1,4 +1,4 @@
-# XyBattleHud 1.1.0
+# XyBattleHud 1.1.1
 # 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
 # 伤害数字显示设置。
@@ -112,3 +112,7 @@ default-type: normal
 
 # 是否在控制台输出伤害类型、AP 触发项和连击数。
 debug: false
+
+messages:
+  # 独立运行时使用本前缀；检测到 XyCore 时，玩家聊天提示优先使用 XyCore config.yml -> messages.prefix。
+  prefix: '&7[&bXyBattleHud&7]&r '

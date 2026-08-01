@@ -29,7 +29,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.1.0.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.1.1.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符和 `combo.images` 图片路径与客户端资源一致。
@@ -113,6 +113,8 @@ damage-types:
 
 XyCore 是软依赖，不能阻止 XyBattleHud 启动。它提供 `XyCore.get().getAttributes()` 的稳定属性读取 API；存在且可用时优先使用，避免本插件直接绑定 AttributePlus 内部实现。XyCore 当前 API 只读取属性值，不携带单次攻击的元素/触发上下文，因此 v1 仍会监听 AttributePlus 事件消息来判断某一击的暴击、撕裂等触发类型。
 
+玩家聊天提示前缀也会优先读取XyCore 0.3.11+ 的 `messages.prefix`。未安装或未启用XyCore时，命令反馈使用本插件 `config.yml -> messages.prefix`，确保XyBattleHud仍可独立运行。伤害数字、连击图片、ActionBar和Title类战斗显示不强制追加XyCore聊天前缀。
+
 ## 已知范围
 
 - 当前版本不包含怪物血条、原版伤害粒子压缩、玩家隐藏设置、权限字体组、ProtocolLib 虚拟实体或其他属性插件适配。
@@ -128,7 +130,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.1.0.jar`。
+产物：`build/libs/XyBattleHud-1.1.1.jar`。
 
 ## 许可证
 

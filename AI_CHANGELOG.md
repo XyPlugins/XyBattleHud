@@ -2,6 +2,13 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-02 - v1.1.1 XyCore玩家前缀
+
+- 根据服主确认的“可独立插件无XyCore时使用自己前缀”规则，AI辅助新增 `MessagePrefix` 工具。
+- 命令反馈优先通过反射读取XyCore `getMessagePrefix()`；没有可用Core时回退到本插件 `messages.prefix`。
+- 未把XyCore设为硬依赖，保持XyBattleHud在只有DragonCore/AttributePlus环境下也能启动。
+- 本次只统一聊天命令反馈，不改变伤害飘字、连击WorldTexture、ActionBar和Title战斗显示。
+
 ## 2026-07-26 - v1.1.0 连击视图
 
 - 根据需求设计同目标连击规则：2 秒超时、切换目标重置、AP 同次事件去重、上限 `999`。
