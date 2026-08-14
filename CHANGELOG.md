@@ -1,5 +1,16 @@
 # 更新记录
 
+## v1.2.0 - 2026-08-14
+
+- 新增右下角拾取视图：玩家拾取后显示拾取框、真实物品图标、物品名和本次数量。
+- 新增 DragonCore `PacketSender.putClientSlotItem` 与 `sendRunFunction` 反射桥，保持 DragonCore 软依赖。
+- 新增 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)，可直接放入 `plugins/DragonCore/Gui/` 使用。
+- 普通拾取监听 1.12.2 `PlayerPickupItemEvent`，按掉落堆数量减去 `event.getRemaining()` 计算实际拾取数量。
+- 软接入 XySoulSpace `XySoulSpaceItemDepositEvent`；自动拾取进入灵魂仓库时也会显示同一套拾取提示。
+- `/xybh info` 增加 DragonCore 拾取接口与 XySoulSpace 拾取桥状态。
+- 默认配置新增 `pickup` 中文注释段，保持设置简洁，不加入品质、来源、权限组等复杂逻辑。
+- 新增拾取数量计算单元测试，版本号更新为 `1.2.0`。
+
 ## v1.1.2 - 2026-08-02
 
 - 按服主最终确认收回 `/xybh` 命令前缀：help、reload、info、clear、debug 和权限不足全部保留 XyBattleHud 自身前缀。

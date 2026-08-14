@@ -31,6 +31,7 @@ public final class PluginSettings {
     private final boolean preferXyCore;
     private final double attributeThreshold;
     private final ComboSettings combo;
+    private final PickupSettings pickup;
     private final Map<String, DamageType> types;
     private final List<DamageType> orderedTypes;
     private final DamageType defaultType;
@@ -51,6 +52,7 @@ public final class PluginSettings {
         preferXyCore = config.getBoolean("attribute.prefer-xycore", true);
         attributeThreshold = config.getDouble("attribute.threshold", 0.0);
         combo = ComboSettings.load(config);
+        pickup = PickupSettings.load(config);
         debug = config.getBoolean("debug", false);
 
         Map<String, DamageType> loaded = loadTypes(config.getConfigurationSection("damage-types"));
@@ -127,6 +129,7 @@ public final class PluginSettings {
     public boolean isPreferXyCore() { return preferXyCore; }
     public double getAttributeThreshold() { return attributeThreshold; }
     public ComboSettings getCombo() { return combo; }
+    public PickupSettings getPickup() { return pickup; }
     public Map<String, DamageType> getTypes() { return types; }
     public List<DamageType> getOrderedTypes() { return orderedTypes; }
     public DamageType getDefaultType() { return defaultType; }

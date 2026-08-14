@@ -12,6 +12,9 @@ import org.xyplugin.xybattlehud.config.PluginSettings;
 import org.xyplugin.xybattlehud.damage.DamageListener;
 import org.xyplugin.xybattlehud.damage.DamageTypeResolver;
 import org.xyplugin.xybattlehud.display.HologramManager;
+import org.xyplugin.xybattlehud.pickup.PickupDisplayManager;
+import org.xyplugin.xybattlehud.pickup.PickupListener;
+import org.xyplugin.xybattlehud.pickup.SoulSpacePickupBridge;
 
 public final class XyBattleHudPlugin extends JavaPlugin {
     private PluginSettings settings;
@@ -21,6 +24,8 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     private HologramManager holograms;
     private ComboTracker comboTracker;
     private ComboDisplayManager comboDisplays;
+    private PickupDisplayManager pickupDisplays;
+    private SoulSpacePickupBridge soulSpacePickupBridge;
     private boolean runtimeDebug;
 
     @Override
@@ -37,8 +42,11 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         holograms = new HologramManager(this);
         comboTracker = new ComboTracker(settings.getCombo().getTimeoutTicks(), settings.getCombo().getMaxCount());
         comboDisplays = new ComboDisplayManager(this);
+        pickupDisplays = new PickupDisplayManager(this);
+        soulSpacePickupBridge = new SoulSpacePickupBridge(this);
         reloadServices();
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new PickupListener(this), this);
         BattleHudCommand command = new BattleHudCommand(this);
         PluginCommand pluginCommand = getCommand("xybh");
         if (pluginCommand != null) {
@@ -62,6 +70,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         comboTracker.clear();
         comboTracker = new ComboTracker(settings.getCombo().getTimeoutTicks(), settings.getCombo().getMaxCount());
         comboDisplays.reload();
+        pickupDisplays.reload();
         reloadServices();
     }
 
@@ -69,6 +78,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         attributeReader = AttributeReaders.discover(this, settings.isPreferXyCore());
         resolver = new DamageTypeResolver(settings, attributeReader);
         attributePlusBridge.register();
+        soulSpacePickupBridge.register();
     }
 
     public PluginSettings getSettings() { return settings; }
@@ -78,6 +88,8 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     public HologramManager getHolograms() { return holograms; }
     public ComboTracker getComboTracker() { return comboTracker; }
     public ComboDisplayManager getComboDisplays() { return comboDisplays; }
+    public PickupDisplayManager getPickupDisplays() { return pickupDisplays; }
+    public SoulSpacePickupBridge getSoulSpacePickupBridge() { return soulSpacePickupBridge; }
 
     public void clearDisplays() {
         holograms.clear();

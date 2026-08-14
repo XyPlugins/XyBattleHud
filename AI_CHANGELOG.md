@@ -2,6 +2,16 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-14 - v1.2.0 拾取视图
+
+- 根据需求新增右下角拾取提示，服务端只发送 `ItemStack` 缓存和 HUD 函数调用，视觉布局交给 DragonCore YML。
+- 参考 `YeeCombatView拾取视图.yml` 的 `slot` 缓存机制，删去品质、来源等复杂参数，仅保留物品、数量和右下角堆叠显示。
+- 核对 DragonCore `2.6.2.9` 的 `PacketSender.putClientSlotItem`、`sendOpenHud`、`sendRunFunction` 方法签名，并使用反射保持软依赖。
+- 查看 XySoulSpace `1.1.10` 自动拾取实现，确认其普通拾取会取消事件、范围扫描会直接移除地面物品，因此额外软监听 `XySoulSpaceItemDepositEvent`。
+- 普通拾取继续监听 Bukkit 1.12.2 `PlayerPickupItemEvent`，按 `stackAmount - remaining` 计算实际拾取数量，避免背包满时误报整组。
+- 新增 `pickup` 中文配置段、DragonCore HUD 示例文件和 `/xybh info` 诊断项。
+- 增加拾取数量计算单元测试，并执行 `gradlew.bat clean test jar` 验证通过。
+
 ## 2026-08-02 - v1.1.2 前缀语义修正
 
 - 根据服主最终确认，`/xybh` 属于管理/排错命令，应保留 XyBattleHud 自身前缀。

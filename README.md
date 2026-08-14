@@ -1,8 +1,8 @@
 # XyBattleHud
 
-`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore WorldTexture 显示。
+`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore WorldTexture 显示，拾取提示通过 DragonCore HUD 显示真实物品图标、名称和数量。
 
-当前版本专注于伤害类型字形和连击显示，不包含怪物血条等无关功能。
+当前版本专注于伤害类型字形、连击显示和拾取提示，不包含怪物血条等无关功能。
 
 ## 特性
 
@@ -14,6 +14,8 @@
 - 普攻连击使用 `连击数_1.png`，暴击连击使用 `连击数_2.png`，数字排列在样式图片前面。
 - 连击位置、数字大小、样式图片大小可配置，计数最大为 `999`。
 - 连击采用 DragonCore WorldTexture，不使用 ArmorStand 名称，因此没有字体图片黑底。
+- 玩家拾取物品后可在右下角显示拾取框、真实物品图标、物品名和本次数量。
+- 兼容 XySoulSpace 自动拾取；物品直接进入灵魂仓库时也能显示同一套拾取提示。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
 - 支持第三方通过实体 metadata `xybattlehud.damage-type` 指定已配置类型。
@@ -24,16 +26,18 @@
 - Paper/Spigot 1.12.2。
 - 可选：AttributePlus，默认属性来源。
 - 可选：XyCore。仅作为稳定的 AttributePlus 读取桥，不是硬依赖。
-- DragonCore：伤害字体映射本身不要求服务端 API；启用连击图片显示时必须安装。
-- 客户端：DragonCore 字体配置、伤害数字 PNG 和连击 PNG。
+- DragonCore：伤害字体映射本身不要求服务端 API；启用连击图片和拾取 HUD 时必须安装。
+- 可选：XySoulSpace。启用自动拾取入库时，本插件会软监听其 `XySoulSpaceItemDepositEvent`。
+- 客户端：DragonCore 字体配置、伤害数字 PNG、连击 PNG 和拾取框 PNG。
 
 ## 安装
 
-1. 将 `XyBattleHud-1.1.2.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.2.0.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
-4. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符和 `combo.images` 图片路径与客户端资源一致。
-5. 使用 `/xybh info` 检查属性来源、AttributePlus 事件和龙核连击状态。
+4. 将 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`，并把拾取框图片放到客户端 `DragonCore/战斗视图/拾取视图/拾取框.png`。
+5. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.images` 图片路径和 `pickup.hud-name` 与客户端资源一致。
+6. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击、龙核拾取和灵魂仓库拾取状态。
 
 默认字形采用已验证的艾尔字体字符：
 
@@ -57,6 +61,16 @@ AttributePlus / Bukkit 伤害事件
 服务端不知道 PNG 的路径。DragonCore 在客户端已经注册了字符到图片的映射后，普通聊天、实体名和全息字里出现相同字符都会使用该图片字形。这就是插件无需 DragonCore API 也能显示图片数字的原因。
 
 连击与伤害数字不同。连击需要控制多个独立图片的位置和大小，因此服务端通过 DragonCore `CoreAPI.setPlayerWorldTexture` 发送数字 PNG 与样式 PNG 的路径。它不会读取客户端文件；客户端收到路径后自行加载对应图片。
+
+拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。DragonCore HUD 的 `slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
+
+```text
+PlayerPickupItemEvent / XySoulSpaceItemDepositEvent
+        -> XyBattleHud 计算本次拾取数量
+        -> DragonCore putClientSlotItem 缓存 ItemStack
+        -> 调用 XyBattleHud拾取视图.yml 的 创建拾取
+        -> 客户端 HUD 显示拾取框、图标、名称、数量
+```
 
 ## 配置
 
@@ -100,12 +114,24 @@ damage-types:
 
 每次命中只保留攻击者最新的一组连击贴图。插件只向同世界 32 格内玩家发送，最多发送三位数字和一张样式图；所有连击共用一个清理任务。
 
+### 拾取配置
+
+- `enabled`：是否启用右下角拾取提示。
+- `soul-space-enabled`：是否接入 XySoulSpace 自动拾取入库事件。
+- `hud-name`：DragonCore GUI/HUD 文件名，不写 `.yml`。
+- `function-name`：HUD 中创建拾取框的函数名，默认 `创建拾取`。
+- `cache-prefix`：DragonCore 临时物品缓存前缀，一般不改。
+
+普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
+
+DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，优先修改文件里 `拾取背景` 的 `x/y` 注释区域；需要换框图时修改 `texture: 战斗视图/拾取视图/拾取框.png`。
+
 ## 命令
 
 所有命令需要 `xybattlehud.admin`，默认为 OP。
 
 - `/xybh reload`：重新读取配置并重新连接可选依赖。
-- `/xybh info`：查看版本、属性来源、AP 事件桥、DragonCore 连击接口和当前显示数量。
+- `/xybh info`：查看版本、属性来源、AP 事件桥、DragonCore 连击接口、DragonCore 拾取接口、XySoulSpace 拾取桥和当前显示数量。
 - `/xybh clear`：清除当前全部飘字。
 - `/xybh debug [on|off]`：临时输出每次伤害的数值、类型和 AP 消息。重载后恢复配置值。
 
@@ -120,7 +146,8 @@ XyCore 是软依赖，不能阻止 XyBattleHud 启动。它提供 `XyCore.get().
 - 当前版本不包含怪物血条、原版伤害粒子压缩、玩家隐藏设置、权限字体组、ProtocolLib 虚拟实体或其他属性插件适配。
 - 伤害数字仍由原生 ArmorStand 显示，其可见距离由服务端实体追踪范围控制。
 - 没有配置的小数点、千位分隔符会以原版字体显示，因此默认禁用小数和分组符号。
-- DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击图片不会显示。
+- DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击图片和拾取 HUD 不会显示。
+- XySoulSpace 未安装时不影响普通拾取提示；只是不显示灵魂仓库自动拾取入库提示。
 
 ## 构建
 
@@ -130,7 +157,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.1.1.jar`。
+产物：`build/libs/XyBattleHud-1.2.0.jar`。
 
 ## 许可证
 
