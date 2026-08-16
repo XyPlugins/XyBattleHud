@@ -2,6 +2,17 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-16 - v1.2.1 拾取 HUD 调用修正与连击固定 HUD
+
+- 根据服主截图中的 DragonCore 报错“方法名：创建拾取”，确认问题出在服务端发送的脚本字符串。
+- 将 `sendRunFunction` 里的调用从 `创建拾取('uuid','数量');` 改为 `方法.执行方法('创建拾取','uuid','数量');`。
+- 保持 HUD 内部 `局部变量.参数.0/1` 的读取方式不变，只修正触发方式。
+- 根据服主截图反馈“连击数不应该悬浮，应该固定在某个位置”，将连击显示从 WorldTexture 改为 DragonCore HUD。
+- 新增 `DragonCoreComboBridge`，服务端通过 `sendOpenHud` 与 `sendRunFunction` 调用 `XyBattleHud连击视图.yml` 的 `更新连击/清除连击`。
+- 新增 `dragoncore/XyBattleHud连击视图.yml`，用 3 个固定数字位和 1 个连击标签位显示，位置、大小和图片路径由 DragonCore YML 控制。
+- 精简 `combo` 服务端配置，移除旧的目标相对坐标、方块尺寸和 WorldTexture 图片路径读取。
+- 版本号同步提升到 `1.2.1`，README 和更新记录同步调整。
+
 ## 2026-08-14 - v1.2.0 拾取视图
 
 - 根据需求新增右下角拾取提示，服务端只发送 `ItemStack` 缓存和 HUD 函数调用，视觉布局交给 DragonCore YML。

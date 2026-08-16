@@ -45,7 +45,8 @@ final class DragonCorePickupBridge {
         try {
             putClientSlotItem.invoke(null, player, cacheKey, item);
             sendOpenHud.invoke(null, player, hudName);
-            String function = functionName + "('" + escape(token) + "','" + Math.max(1, amount) + "');";
+            String function = "方法.执行方法('" + escape(functionName) + "','"
+                    + escape(token) + "','" + Math.max(1, amount) + "');";
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
         } catch (Exception failure) {

@@ -45,7 +45,9 @@ public final class DamageListener implements Listener {
             combo = plugin.getComboTracker().record(attacker.getUniqueId(), target.getUniqueId(),
                     System.currentTimeMillis());
             if (combo >= settings.getCombo().getDisplayFrom()) {
-                plugin.getComboDisplays().show(attacker, target, combo, "critical".equals(type.getId()));
+                plugin.getComboDisplays().show(attacker, combo, "critical".equals(type.getId()));
+            } else {
+                plugin.getComboDisplays().remove(attacker.getUniqueId());
             }
         }
         String number = DamageNumberFormatter.format(damage, settings.getDecimalPlaces(), settings.getThousandsSeparator());

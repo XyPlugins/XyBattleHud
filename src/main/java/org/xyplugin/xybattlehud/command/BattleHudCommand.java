@@ -40,7 +40,7 @@ public final class BattleHudCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(prefix() + ChatColor.WHITE + "v" + plugin.getDescription().getVersion()
                         + ChatColor.GRAY + " | 属性来源: " + plugin.getAttributeReader().getName()
                         + " | AP事件: " + (plugin.getAttributePlusBridge().isAvailable() ? "可用" : "不可用")
-                        + " | 龙核连击: " + (plugin.getComboDisplays().isAvailable() ? "可用" : "不可用")
+                        + " | 龙核连击HUD: " + (plugin.getComboDisplays().isAvailable() ? "可用" : "不可用")
                         + " | 龙核拾取: " + (plugin.getPickupDisplays().isAvailable() ? "可用" : "不可用")
                         + " | 灵魂仓库拾取: " + (plugin.getSoulSpacePickupBridge().isAvailable() ? "可用" : "不可用")
                         + " | 显示: " + (plugin.getHolograms().size() + plugin.getComboDisplays().size()));

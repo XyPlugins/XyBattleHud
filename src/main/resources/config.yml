@@ -1,4 +1,4 @@
-# XyBattleHud 1.2.0
+# XyBattleHud 1.2.1
 # 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
 # 伤害数字显示设置。
@@ -23,7 +23,7 @@ number:
   # 低于该数值的伤害不显示。
   min-damage: 0.1
 
-# 连击设置。使用 DragonCore WorldTexture，因此没有 ArmorStand 黑底。
+# 连击设置。使用 DragonCore HUD 固定在屏幕位置，不再跟随怪物漂浮。
 combo:
   # 是否启用连击。
   enabled: true
@@ -34,30 +34,13 @@ combo:
   # 最大连击数，达到 999 后不再增加。
   max-count: 999
 
-  # 连击整体位置：x 为左右，y 为上下，z 为前后。
-  position:
-    x: 0.65
-    y: 0.20
-    z: 0.0
-
-  # 连击数字和样式图片大小，单位为方块。
-  size:
-    number-width: 0.10
-    number-height: 0.14
-    label-width: 0.22
-    label-height: 0.12
-    # 数字与图片之间的间距。
-    spacing: 0.01
-
-  # DragonCore 客户端图片路径。
-  images:
-    # 普攻连击数字 0-9 所在文件夹。
-    normal-digits-folder: '战斗视图/艾尔字体/普通伤害'
-    # 暴击连击数字 0-9 所在文件夹。
-    critical-digits-folder: '战斗视图/艾尔字体/暴击伤害'
-    # 普攻使用连击数_1，暴击使用连击数_2。
-    normal-label: '战斗视图/伤害字体/连击数_1.png'
-    critical-label: '战斗视图/伤害字体/连击数_2.png'
+  # DragonCore Gui 文件名，不需要写 .yml。
+  # 需要把仓库里的 dragoncore/XyBattleHud连击视图.yml 放到 plugins/DragonCore/Gui/。
+  hud-name: 'XyBattleHud连击视图'
+  # DragonCore HUD 里负责刷新连击数量的函数名。
+  update-function: '更新连击'
+  # DragonCore HUD 里负责隐藏连击的函数名。
+  clear-function: '清除连击'
 
 # 拾取视图设置。物品图标、名字和数量由 DragonCore HUD 显示。
 pickup:

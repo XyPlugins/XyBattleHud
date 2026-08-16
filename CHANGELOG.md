@@ -1,5 +1,13 @@
 # 更新记录
 
+## v1.2.1 - 2026-08-16
+
+- 修复拾取视图的 DragonCore 调用方式：服务端现在通过 `方法.执行方法('创建拾取', ...)` 触发 HUD 函数，不再把 `创建拾取(...)` 当作原始方法名发送给 DragonCore。
+- 连击显示从 DragonCore WorldTexture 改为固定 DragonCore HUD：不再跟随怪物漂浮，只刷新攻击者自己的屏幕 HUD。
+- 新增 [dragoncore/XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml)，连击位置、数字大小、图片路径都在该文件里用中文注释调整。
+- `combo` 配置精简为 `hud-name`、`update-function`、`clear-function`，服务端只负责计数、暴击状态和显示时长。
+- 切换目标或连击低于起显次数时会立即清除旧连击 HUD，避免旧连击数残留。
+
 ## v1.2.0 - 2026-08-14
 
 - 新增右下角拾取视图：玩家拾取后显示拾取框、真实物品图标、物品名和本次数量。
