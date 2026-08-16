@@ -2,6 +2,24 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-16 - v1.2.3 按物品品质选择拾取框
+
+- 阅读服主提供的 `通用.yml` 和 `默认.yml`，确认品质判断使用 `方法.是否包含(物品, 关键词)`，关键词来自物品名称/Lore。
+- 保持品质判断在 DragonCore 客户端完成；XyBattleHud 服务端只继续发送完整 `ItemStack`、数量和 `normal/soul` 来源。
+- 在 `dragoncore/XyBattleHud拾取视图.yml` 中增加品质关键词与品质拾取框路径配置，匹配顺序为 `10` 到 `0`。
+- 品质图片路径为空时不覆盖来源框，普通拾取仍使用普通框，灵魂空间仍使用灵魂框。
+- 保留 `pickup.soul-space-frame-enabled` 的独立开关，不增加 XySoulSpace 或物品插件硬依赖。
+- 版本号更新为 `1.2.3`，同步更新 README、CHANGELOG 和 AI 使用记录。
+
+## 2026-08-16 - v1.2.2 灵魂空间专用拾取框
+
+- 分析 XySoulSpace 的 `XySoulSpaceItemDepositEvent`，确认事件会在成功入库后提供玩家、完整物品和 `source`；自动拾取来源为 `pickup`。
+- 保持 XySoulSpace 软依赖和现有事件桥，只将 `source=pickup` 的事件标记为 DragonCore HUD 的 `soul` 来源。
+- 普通 `PlayerPickupItemEvent` 使用 `normal` 来源，两个来源共用物品缓存、数量、滑入动画和清理逻辑。
+- DragonCore `XyBattleHud拾取视图.yml` 根据 `normal/soul` 参数动态选择普通或灵魂空间背景框，不复制整套 HUD。
+- 新增 `pickup.soul-space-frame-enabled` 开关：关闭时灵魂空间入库提示回退普通框；`pickup.soul-space-enabled` 继续控制是否显示灵魂空间入库提示。
+- 版本号提升到 `1.2.2`，README、更新记录和 AI 使用记录同步更新。
+
 ## 2026-08-16 - v1.2.1 拾取 HUD 调用修正与连击固定 HUD
 
 - 根据服主截图中的 DragonCore 报错“方法名：创建拾取”，确认问题出在服务端发送的脚本字符串。

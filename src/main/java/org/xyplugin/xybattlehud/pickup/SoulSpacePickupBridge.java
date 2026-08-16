@@ -45,12 +45,12 @@ public final class SoulSpacePickupBridge implements Listener {
 
     private void onDeposit(Listener ignored, Event event) {
         Object source = invoke(event, "getSource");
-        if (source != null && !"pickup".equalsIgnoreCase(String.valueOf(source))) return;
+        if (source == null || !"pickup".equalsIgnoreCase(String.valueOf(source))) return;
         Object player = invoke(event, "getPlayer");
         Object item = invoke(event, "getItem");
         if (!(player instanceof Player) || !(item instanceof ItemStack)) return;
         ItemStack stack = (ItemStack) item;
-        plugin.getPickupDisplays().show((Player) player, stack, stack.getAmount());
+        plugin.getPickupDisplays().showSoulSpace((Player) player, stack, stack.getAmount());
     }
 
     private Object invoke(Object target, String name) {

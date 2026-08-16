@@ -19,6 +19,15 @@ public final class PickupDisplayManager {
     }
 
     public boolean show(Player player, ItemStack stack, int amount) {
+        return show(player, stack, amount, "normal");
+    }
+
+    public boolean showSoulSpace(Player player, ItemStack stack, int amount) {
+        PickupSettings settings = plugin.getSettings().getPickup();
+        return show(player, stack, amount, settings.isSoulSpaceFrameEnabled() ? "soul" : "normal");
+    }
+
+    private boolean show(Player player, ItemStack stack, int amount, String source) {
         PickupSettings settings = plugin.getSettings().getPickup();
         if (!settings.isEnabled() || !bridge.isAvailable() || !valid(stack) || amount <= 0) return false;
         String token = player.getUniqueId().toString().substring(0, 8) + "_"
@@ -27,9 +36,10 @@ public final class PickupDisplayManager {
         ItemStack display = stack.clone();
         display.setAmount(Math.max(1, Math.min(display.getMaxStackSize(), amount)));
         boolean sent = bridge.show(player, settings.getHudName(), settings.getFunctionName(),
-                cacheKey, token, display, amount);
+                cacheKey, token, display, amount, source);
         if (plugin.isDebugEnabled() && sent) {
-            plugin.getLogger().info("拾取视图: " + player.getName() + " x" + amount + " " + stack.getType());
+            plugin.getLogger().info("拾取视图(" + source + "): " + player.getName()
+                    + " x" + amount + " " + stack.getType());
         }
         return sent;
     }

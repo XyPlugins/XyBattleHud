@@ -1,4 +1,4 @@
-# XyBattleHud 1.2.1
+# XyBattleHud 1.2.3
 # 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
 # 伤害数字显示设置。
@@ -46,11 +46,14 @@ combo:
 pickup:
   # 是否启用右下角拾取提示。
   enabled: true
-  # 是否接入 XySoulSpace 的自动拾取入库事件。
-  # 开启后，物品直接进入灵魂仓库时也会弹拾取框。
+  # 是否显示物品自动进入灵魂空间时的拾取提示。
   soul-space-enabled: true
+  # 是否使用灵魂空间专用拾取框。
+  # 关闭后仍显示提示，但会回退使用普通拾取框。
+  soul-space-frame-enabled: true
   # DragonCore Gui 文件名，不需要写 .yml。
   # 需要把仓库里的 dragoncore/XyBattleHud拾取视图.yml 放到 plugins/DragonCore/Gui/。
+  # 按品质切换拾取框的关键词和 PNG，也在这个 DragonCore 文件的“图片”段配置。
   hud-name: 'XyBattleHud拾取视图'
   # DragonCore HUD 里负责创建拾取框的函数名。
   function-name: '创建拾取'

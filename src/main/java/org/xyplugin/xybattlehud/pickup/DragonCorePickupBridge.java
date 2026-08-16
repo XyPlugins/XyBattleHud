@@ -40,13 +40,14 @@ final class DragonCorePickupBridge {
     }
 
     boolean show(Player player, String hudName, String functionName, String cacheKey, String token,
-                 ItemStack item, int amount) {
+                 ItemStack item, int amount, String source) {
         if (!isAvailable() || player == null || !player.isOnline() || item == null) return false;
         try {
             putClientSlotItem.invoke(null, player, cacheKey, item);
             sendOpenHud.invoke(null, player, hudName);
             String function = "方法.执行方法('" + escape(functionName) + "','"
-                    + escape(token) + "','" + Math.max(1, amount) + "');";
+                    + escape(token) + "','" + Math.max(1, amount) + "','"
+                    + escape(source) + "');";
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
         } catch (Exception failure) {

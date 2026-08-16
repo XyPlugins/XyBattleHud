@@ -15,7 +15,7 @@
 - 连击位置、数字大小、样式图片大小在 DragonCore 连击视图 YML 中调整，计数最大为 `999`。
 - 连击采用 DragonCore HUD，不使用 ArmorStand 名称，因此没有字体图片黑底，也不会跟随怪物漂浮。
 - 玩家拾取物品后可在右下角显示拾取框、真实物品图标、物品名和本次数量。
-- 兼容 XySoulSpace 自动拾取；物品直接进入灵魂仓库时也能显示同一套拾取提示。
+- 兼容 XySoulSpace 自动拾取；普通背包拾取、灵魂空间拾取和物品品质可以选择不同拾取框。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
 - 支持第三方通过实体 metadata `xybattlehud.damage-type` 指定已配置类型。
@@ -32,11 +32,11 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.2.1.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.2.3.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
-5. 把连击数字、`连击数_1.png`、`连击数_2.png` 和拾取框图片放到客户端 DragonCore 资源目录。
+5. 把连击数字、`连击数_1.png`、`连击数_2.png`、普通 `拾取框.png`、灵魂空间 `灵魂拾取框.png` 和需要使用的品质拾取框 PNG 放到客户端 DragonCore 资源目录。
 6. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
 7. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取和灵魂仓库拾取状态。
 
@@ -70,14 +70,14 @@ AttributePlus / Bukkit 伤害事件
         -> 客户端 HUD 固定显示数字图片 + 连击数图片
 ```
 
-拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。DragonCore HUD 的 `slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
+拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`；DragonCore HUD 根据来源选择对应拾取框。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
 
 ```text
 PlayerPickupItemEvent / XySoulSpaceItemDepositEvent
         -> XyBattleHud 计算本次拾取数量
         -> DragonCore putClientSlotItem 缓存 ItemStack
-        -> 调用 XyBattleHud拾取视图.yml 的 创建拾取
-        -> 客户端 HUD 显示拾取框、图标、名称、数量
+        -> 调用 XyBattleHud拾取视图.yml 的 创建拾取(来源)
+        -> 客户端 HUD 根据 normal/soul 和物品品质显示对应拾取框、图标、名称、数量
 ```
 
 ## 配置
@@ -127,14 +127,36 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 ### 拾取配置
 
 - `enabled`：是否启用右下角拾取提示。
-- `soul-space-enabled`：是否接入 XySoulSpace 自动拾取入库事件。
+- `soul-space-enabled`：是否显示 XySoulSpace 自动拾取入库提示；关闭后不会显示灵魂空间入库提示。
+- `soul-space-frame-enabled`：是否使用灵魂空间专用拾取框；关闭后灵魂空间入库仍会提示，但改用普通拾取框。
 - `hud-name`：DragonCore GUI/HUD 文件名，不写 `.yml`。
 - `function-name`：HUD 中创建拾取框的函数名，默认 `创建拾取`。
 - `cache-prefix`：DragonCore 临时物品缓存前缀，一般不改。
 
 普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
 
-DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，优先修改文件里 `拾取背景` 的 `x/y` 注释区域；需要换框图时修改 `texture: 战斗视图/拾取视图/拾取框.png`。
+DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，优先修改文件里 `拾取背景` 的 `x/y` 注释区域；普通框、灵魂空间框和品质框路径都在文件顶部 `图片` 段修改。
+
+### 品质拾取框
+
+品质判断沿用你提供的 `通用.yml`：
+
+- `品质判断词0-10`：在物品名称或 Lore 中查找的关键词。
+- `品质拾取框0-10`：匹配后使用的 PNG 路径。
+- 匹配从 `10` 到 `0` 执行，数字越大优先级越高。
+- `品质拾取框启用: false` 时只按普通/灵魂空间来源选择框。
+- 某个品质图片路径留空时，回退到普通拾取框或灵魂空间拾取框。
+
+示例：
+
+```yml
+图片:
+  品质拾取框启用: true
+  品质判断词1: 白描
+  品质拾取框1: 战斗视图/拾取视图/品质/白描拾取框.png
+```
+
+品质图片需要由客户端资源包提供；服务端不会读取客户端 PNG，也不会解析物品插件的私有 NBT。
 
 ## 命令
 
@@ -167,7 +189,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.2.1.jar`。
+产物：`build/libs/XyBattleHud-1.2.3.jar`。
 
 ## 许可证
 
