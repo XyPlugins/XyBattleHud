@@ -32,11 +32,11 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.2.3.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.2.4.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
-5. 把连击数字、`连击数_1.png`、`连击数_2.png`、普通 `拾取框.png`、灵魂空间 `灵魂拾取框.png` 和需要使用的品质拾取框 PNG 放到客户端 DragonCore 资源目录。
+5. 把连击数字、`连击数_1.png`、`连击数_2.png` 与品质拾取框 PNG 放到客户端 `DragonCore/战斗视图/拾取视图/`；默认框使用白描两张图片。
 6. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
 7. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取和灵魂仓库拾取状态。
 
@@ -142,10 +142,12 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/X
 品质判断沿用你提供的 `通用.yml`：
 
 - `品质判断词0-10`：在物品名称或 Lore 中查找的关键词。
-- `品质拾取框0-10`：匹配后使用的 PNG 路径。
+- `品质普通拾取框0-10`：匹配后、进入玩家背包时使用的 PNG 路径。
+- `品质灵魂拾取框0-10`：匹配后、自动进入灵魂空间时使用的 PNG 路径。
 - 匹配从 `10` 到 `0` 执行，数字越大优先级越高。
 - `品质拾取框启用: false` 时只按普通/灵魂空间来源选择框。
-- 某个品质图片路径留空时，回退到普通拾取框或灵魂空间拾取框。
+- 当前已写入白描、萌黄、气象、极意、归元、传神、浮世两套图片路径；待锻造复用白描框。
+- 未匹配品质词、或某个来源的品质图片路径留空时，回退到默认白描框或白描灵魂框。
 
 示例：
 
@@ -153,7 +155,8 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/X
 图片:
   品质拾取框启用: true
   品质判断词1: 白描
-  品质拾取框1: 战斗视图/拾取视图/品质/白描拾取框.png
+  品质普通拾取框1: 战斗视图/拾取视图/白描拾取框.png
+  品质灵魂拾取框1: 战斗视图/拾取视图/白描灵魂拾取框.png
 ```
 
 品质图片需要由客户端资源包提供；服务端不会读取客户端 PNG，也不会解析物品插件的私有 NBT。
@@ -189,7 +192,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.2.3.jar`。
+产物：`build/libs/XyBattleHud-1.2.4.jar`。
 
 ## 许可证
 
