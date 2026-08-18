@@ -1,4 +1,4 @@
-# XyBattleHud 1.3.6
+# XyBattleHud 1.3.7
 # 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
 # 伤害数字显示设置。
@@ -62,7 +62,7 @@ pickup:
 
   position:
     # 拾取框距离屏幕右边多少像素。数值越大，整体越往左。
-    right: 8
+    right: 50
     # 拾取框距离屏幕底部多少像素。数值越大，整体越往上。
     bottom: 74
 

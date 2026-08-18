@@ -38,7 +38,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.6.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.7.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
@@ -190,7 +190,14 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 
 普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
 
-DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，改 `config.yml -> pickup.position.right/bottom`；普通框、灵魂空间框、经验图标和品质框路径都在文件顶部 `图片` 段修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
+DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整整体位置时，改 `config.yml -> pickup.position.right/bottom`；普通框、灵魂空间框、经验图标和品质框路径都在文件顶部 `图片` 段修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
+
+经验和金币图标大小、坐标在 DragonCore 视图里分开调：
+
+- `拾取经验图标`：只影响经验提示的图标。
+- `拾取金币图标`：只影响金币提示的图标。
+- `x` 中最后的 `+4` 越大越往右，`y` 中的 `+4` 越大越往下。
+- `width` / `height` 控制图标大小。
 
 ### 品质拾取框
 
@@ -250,7 +257,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.6.jar`。
+产物：`build/libs/XyBattleHud-1.3.7.jar`。
 
 ## 许可证
 
