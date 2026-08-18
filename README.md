@@ -1,6 +1,6 @@
 # XyBattleHud
 
-`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore HUD 固定在屏幕位置显示，拾取提示通过 DragonCore HUD 显示真实物品图标、名称和数量。
+`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore HUD 固定在屏幕位置显示，拾取提示通过 DragonCore HUD 显示真实物品图标、经验图标、名称和数量。
 
 当前版本专注于伤害类型字形、连击显示和拾取提示，不包含怪物血条等无关功能。
 
@@ -15,6 +15,7 @@
 - 连击位置、数字大小、样式图片大小在 DragonCore 连击视图 YML 中调整，计数最大为 `999`。
 - 连击采用 DragonCore HUD，不使用 ArmorStand 名称，因此没有字体图片黑底，也不会跟随怪物漂浮。
 - 玩家拾取物品后可在右下角显示拾取框、真实物品图标、物品名和本次数量。
+- 经验获得时可在右下角显示经验提示，显示名和图标都能在 `config.yml` 改。
 - 兼容 XySoulSpace 自动拾取；普通背包拾取、灵魂空间拾取和物品品质可以选择不同拾取框。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
@@ -28,17 +29,19 @@
 - 可选：XyCore。仅作为稳定的 AttributePlus 读取桥，不是硬依赖。
 - DragonCore：伤害字体映射本身不要求服务端 API；启用连击 HUD 和拾取 HUD 时必须安装。
 - 可选：XySoulSpace。启用自动拾取入库时，本插件会软监听其 `XySoulSpaceItemDepositEvent`。
+- 可选：AkariLevel。启用经验拾取时，本插件会软监听其经验变更事件。
 - 客户端：DragonCore 字体配置、伤害数字 PNG、连击 PNG 和拾取框 PNG。
 
 ## 安装
 
-1. 将 `XyBattleHud-1.2.4.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.0.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
 5. 把连击数字、`连击数_1.png`、`连击数_2.png` 与品质拾取框 PNG 放到客户端 `DragonCore/战斗视图/拾取视图/`；默认框使用白描两张图片。
-6. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
-7. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取和灵魂仓库拾取状态。
+6. 如果要显示经验拾取，确认客户端有 `战斗视图/属性图标/经验加成图标.png`，并在 `config.yml` 里改 `pickup.experience`。
+7. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
+8. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取、AkariLevel 经验桥和灵魂仓库拾取状态。
 
 默认字形采用已验证的艾尔字体字符：
 
@@ -70,7 +73,9 @@ AttributePlus / Bukkit 伤害事件
         -> 客户端 HUD 固定显示数字图片 + 连击数图片
 ```
 
-拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`；DragonCore HUD 根据来源选择对应拾取框。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
+拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`；当前资源包的两套框视觉是反着摆的，所以拾取视图里把这两个来源的显示图反过来套了一层。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
+
+经验拾取不走物品缓存。XyBattleHud 监听 AkariLevel 的经验变更事件，拿到本次增加的经验值后，把可配置的经验名称和图标路径发给 DragonCore HUD。
 
 ```text
 PlayerPickupItemEvent / XySoulSpaceItemDepositEvent
@@ -78,6 +83,13 @@ PlayerPickupItemEvent / XySoulSpaceItemDepositEvent
         -> DragonCore putClientSlotItem 缓存 ItemStack
         -> 调用 XyBattleHud拾取视图.yml 的 创建拾取(来源)
         -> 客户端 HUD 根据 normal/soul 和物品品质显示对应拾取框、图标、名称、数量
+```
+
+```text
+AkariLevel MemberExpChangeEvent
+        -> XyBattleHud 读取本次经验增量
+        -> 调用 XyBattleHud拾取视图.yml 的 创建拾取(experience)
+        -> 客户端 HUD 显示经验图标、经验名称和数值
 ```
 
 ## 配置
@@ -132,10 +144,22 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `hud-name`：DragonCore GUI/HUD 文件名，不写 `.yml`。
 - `function-name`：HUD 中创建拾取框的函数名，默认 `创建拾取`。
 - `cache-prefix`：DragonCore 临时物品缓存前缀，一般不改。
+- `experience.enabled`：是否显示经验拾取提示。
+- `experience.akari-level-enabled`：是否接入 AkariLevel 经验事件。
+- `experience.provider-plugin`：提供经验事件的插件名，默认 `AkariLevel`。
+- `experience.event-class`：经验事件类名，一般不改。
+- `experience.player-variable`：事件里的玩家变量名，默认 `member`。
+- `experience.amount-variable`：事件里的经验数量变量名，默认 `expAmount`。
+- `experience.level-group-variable`：事件里的等级组变量名，默认 `levelGroup`。
+- `experience.source-variable`：事件里的来源变量名，默认 `source`。
+- `experience.level-group`：只接收某个等级组的经验，留空表示全部。
+- `experience.sources`：只接收某些来源字符串，留空表示全部。
+- `experience.display-name`：经验提示里显示的名字。
+- `experience.icon`：经验提示图标路径。
 
 普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
 
-DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，优先修改文件里 `拾取背景` 的 `x/y` 注释区域；普通框、灵魂空间框和品质框路径都在文件顶部 `图片` 段修改。
+DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，优先修改文件里 `拾取背景` 的 `x/y` 注释区域；普通框、灵魂空间框、经验图标和品质框路径都在文件顶部 `图片` 段修改。
 
 ### 品质拾取框
 
@@ -144,6 +168,7 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/X
 - `品质判断词0-10`：在物品名称或 Lore 中查找的关键词。
 - `品质普通拾取框0-10`：匹配后、进入玩家背包时使用的 PNG 路径。
 - `品质灵魂拾取框0-10`：匹配后、自动进入灵魂空间时使用的 PNG 路径。
+- 当前客户端资源包里两套框视觉和命名相反，HUD 创建时会反向套用：普通背包显示头颅框，灵魂空间显示箱子框。
 - 匹配从 `10` 到 `0` 执行，数字越大优先级越高。
 - `品质拾取框启用: false` 时只按普通/灵魂空间来源选择框。
 - 当前已写入白描、萌黄、气象、极意、归元、传神、浮世两套图片路径；待锻造复用白描框。
@@ -166,7 +191,7 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/X
 所有命令需要 `xybattlehud.admin`，默认为 OP。
 
 - `/xybh reload`：重新读取配置并重新连接可选依赖。
-- `/xybh info`：查看版本、属性来源、AP 事件桥、DragonCore 连击 HUD、DragonCore 拾取接口、XySoulSpace 拾取桥和当前显示数量。
+- `/xybh info`：查看版本、属性来源、AP 事件桥、DragonCore 连击 HUD、DragonCore 拾取接口、AkariLevel 经验桥、XySoulSpace 拾取桥和当前显示数量。
 - `/xybh clear`：清除当前全部飘字。
 - `/xybh debug [on|off]`：临时输出每次伤害的数值、类型和 AP 消息。重载后恢复配置值。
 
@@ -181,8 +206,9 @@ XyCore 是软依赖，不能阻止 XyBattleHud 启动。它提供 `XyCore.get().
 - 当前版本不包含怪物血条、原版伤害粒子压缩、玩家隐藏设置、权限字体组、ProtocolLib 虚拟实体或其他属性插件适配。
 - 伤害数字仍由原生 ArmorStand 显示，其可见距离由服务端实体追踪范围控制。
 - 没有配置的小数点、千位分隔符会以原版字体显示，因此默认禁用小数和分组符号。
-- DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击 HUD 和拾取 HUD 不会显示。
+- DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击 HUD、拾取 HUD 和经验 HUD 不会显示。
 - XySoulSpace 未安装时不影响普通拾取提示；只是不显示灵魂仓库自动拾取入库提示。
+- AkariLevel 未安装或未成功启用时，不影响普通拾取和连击，只是不显示经验拾取提示。
 
 ## 构建
 
@@ -192,7 +218,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.2.4.jar`。
+产物：`build/libs/XyBattleHud-1.3.0.jar`。
 
 ## 许可证
 

@@ -45,15 +45,36 @@ final class DragonCorePickupBridge {
         try {
             putClientSlotItem.invoke(null, player, cacheKey, item);
             sendOpenHud.invoke(null, player, hudName);
-            String function = "方法.执行方法('" + escape(functionName) + "','"
-                    + escape(token) + "','" + Math.max(1, amount) + "','"
-                    + escape(source) + "');";
+            String function = createFunction(functionName, token, amount, source, "", "");
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
         } catch (Exception failure) {
             if (plugin.isDebugEnabled()) plugin.getLogger().warning("发送拾取视图失败: " + failure.getMessage());
             return false;
         }
+    }
+
+    boolean showExperience(Player player, String hudName, String functionName, String token,
+                           long amount, String displayName, String iconPath) {
+        if (!isAvailable() || player == null || !player.isOnline()) return false;
+        try {
+            sendOpenHud.invoke(null, player, hudName);
+            String function = createFunction(functionName, token, amount, "experience",
+                    displayName, iconPath);
+            sendRunFunction.invoke(null, player, hudName, function, false);
+            return true;
+        } catch (Exception failure) {
+            if (plugin.isDebugEnabled()) plugin.getLogger().warning("发送经验拾取视图失败: " + failure.getMessage());
+            return false;
+        }
+    }
+
+    private String createFunction(String functionName, String token, long amount, String source,
+                                  String displayName, String iconPath) {
+        return "方法.执行方法('" + escape(functionName) + "','"
+                + escape(token) + "','" + Math.max(1L, amount) + "','"
+                + escape(source) + "','" + escape(displayName) + "','"
+                + escape(iconPath) + "');";
     }
 
     private String escape(String value) {

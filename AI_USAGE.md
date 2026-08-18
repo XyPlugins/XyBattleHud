@@ -1,5 +1,22 @@
 # AI 使用记录
 
+## 1.3.0
+
+本次修改由 AI 根据服主提出的“给拾取视图引入经验拾取，并且经验值、显示名、图标、来源筛选都要能改；同时修正普通背包与灵魂空间拾取框显示反了”的需求辅助完成。
+
+已确认的实现边界：
+
+- 经验提示不是去读 DragonCore 字体，而是由服务端拿到本次经验增量后再交给 DragonCore HUD 显示。
+- AkariLevel 只作为软依赖接入；没有安装时，经验提示自动跳过，不会影响伤害、连击和普通拾取。
+- `pickup.experience.display-name`、`pickup.experience.icon`、`pickup.experience.level-group`、`pickup.experience.sources` 都可以在 `config.yml` 里改。
+- 事件类名和变量名也在配置里：默认读取 AkariLevel 事件的 `member`、`expAmount`、`levelGroup`、`source`。
+- DragonCore 拾取视图新增 `experience` 模式，经验提示不走物品槽缓存，只显示图标和文字。
+- 按服主当前客户端资源包的实际视觉，普通背包和灵魂空间拾取框的来源映射已对调。
+
+验证记录：
+
+- 已执行 `gradlew.bat clean test jar`，构建通过。
+
 ## 1.2.4
 
 本次修改由 AI 根据服主放入 `V0.0.3` DragonCore 资源包的品质拾取框图片辅助完成。

@@ -1,4 +1,4 @@
-# XyBattleHud 1.2.4
+# XyBattleHud 1.3.0
 # 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
 # 伤害数字显示设置。
@@ -59,6 +59,30 @@ pickup:
   function-name: '创建拾取'
   # 发给客户端的临时物品缓存前缀。一般不要修改，除非和其他插件冲突。
   cache-prefix: 'xybh_pickup_item_'
+
+  experience:
+    # 是否显示经验拾取提示。
+    enabled: true
+    # 是否接入 AkariLevel 的经验变更事件。
+    akari-level-enabled: true
+    # 提供经验事件的插件名。默认 AkariLevel。
+    provider-plugin: 'AkariLevel'
+    # 经验事件类名。一般不用改，除非等级插件升级后改了事件路径。
+    event-class: 'top.cpjinan.akarilevel.event.MemberExpChangeEvent'
+    # 下面是事件里的变量名，不是图片路径。变量名改了就改这里，不用改代码。
+    player-variable: 'member'
+    amount-variable: 'expAmount'
+    level-group-variable: 'levelGroup'
+    source-variable: 'source'
+    # 只显示这个等级组的经验；留空表示全部等级组都显示。
+    level-group: ''
+    # 只接收这些来源；留空表示全部来源都显示。
+    # 例如：VANILLA_EXP_CHANGE、MYTHICMOBS_DROP_EXP
+    sources: []
+    # 经验提示里显示的名字。
+    display-name: '经验'
+    # 经验图标路径，直接改这里就行。
+    icon: '战斗视图/属性图标/经验加成图标.png'
 
 # 过滤设置。
 filter:

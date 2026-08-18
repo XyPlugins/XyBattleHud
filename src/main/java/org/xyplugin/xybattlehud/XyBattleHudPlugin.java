@@ -14,6 +14,7 @@ import org.xyplugin.xybattlehud.damage.DamageTypeResolver;
 import org.xyplugin.xybattlehud.display.HologramManager;
 import org.xyplugin.xybattlehud.pickup.PickupDisplayManager;
 import org.xyplugin.xybattlehud.pickup.PickupListener;
+import org.xyplugin.xybattlehud.pickup.AkariLevelExpBridge;
 import org.xyplugin.xybattlehud.pickup.SoulSpacePickupBridge;
 
 public final class XyBattleHudPlugin extends JavaPlugin {
@@ -26,6 +27,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     private ComboDisplayManager comboDisplays;
     private PickupDisplayManager pickupDisplays;
     private SoulSpacePickupBridge soulSpacePickupBridge;
+    private AkariLevelExpBridge akariLevelExpBridge;
     private boolean runtimeDebug;
 
     @Override
@@ -44,6 +46,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         comboDisplays = new ComboDisplayManager(this);
         pickupDisplays = new PickupDisplayManager(this);
         soulSpacePickupBridge = new SoulSpacePickupBridge(this);
+        akariLevelExpBridge = new AkariLevelExpBridge(this);
         reloadServices();
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new PickupListener(this), this);
@@ -79,6 +82,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         resolver = new DamageTypeResolver(settings, attributeReader);
         attributePlusBridge.register();
         soulSpacePickupBridge.register();
+        akariLevelExpBridge.register();
     }
 
     public PluginSettings getSettings() { return settings; }
@@ -90,6 +94,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     public ComboDisplayManager getComboDisplays() { return comboDisplays; }
     public PickupDisplayManager getPickupDisplays() { return pickupDisplays; }
     public SoulSpacePickupBridge getSoulSpacePickupBridge() { return soulSpacePickupBridge; }
+    public AkariLevelExpBridge getAkariLevelExpBridge() { return akariLevelExpBridge; }
 
     public void clearDisplays() {
         holograms.clear();

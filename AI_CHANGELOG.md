@@ -2,6 +2,16 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-18 - v1.3.0 经验拾取与来源对调
+
+- 新增 `pickup.experience` 中文配置段，经验提示名、图标、等级组、来源过滤、事件类名和事件变量名都可改。
+- 使用 AkariLevel 的 `MemberExpChangeEvent` 做软接入，服务端拿到本次经验增量后再发给 DragonCore 显示。
+- 新增 `AkariLevelExpBridge`，通过反射注册事件，不把 AkariLevel 做成编译期硬依赖。
+- `dragoncore/XyBattleHud拾取视图.yml` 新增经验模式，普通拾取与经验拾取共用同一套右下角 HUD。
+- 根据服主测试反馈，把普通背包和灵魂空间的拾取框视觉映射对调，修正当前资源包的实际显示顺序。
+- `BattleHudCommand info` 增加 AkariLevel 经验桥状态，便于现场排查。
+- 构建 `gradlew.bat clean test jar` 已通过，版本号提升到 `1.3.0`。
+
 ## 2026-08-17 - v1.2.4 品质普通框与灵魂框
 
 - 核对服主 `V0.0.3` 客户端资源包中的 14 张拾取框，确认全部为约 `5:1` 比例，可用于现有 `120 x 22` HUD 背景。

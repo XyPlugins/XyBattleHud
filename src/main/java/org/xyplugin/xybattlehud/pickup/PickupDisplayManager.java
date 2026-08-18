@@ -27,6 +27,23 @@ public final class PickupDisplayManager {
         return show(player, stack, amount, settings.isSoulSpaceFrameEnabled() ? "soul" : "normal");
     }
 
+    public boolean showExperience(Player player, long amount, String displayName, String iconPath) {
+        PickupSettings settings = plugin.getSettings().getPickup();
+        if (!settings.isEnabled() || !settings.getExperience().isEnabled()
+                || !bridge.isAvailable() || player == null || !player.isOnline() || amount <= 0) {
+            return false;
+        }
+        String token = player.getUniqueId().toString().substring(0, 8) + "_"
+                + Long.toString(sequence.incrementAndGet(), 36);
+        boolean sent = bridge.showExperience(player, settings.getHudName(), settings.getFunctionName(),
+                token, amount, displayName, iconPath);
+        if (plugin.isDebugEnabled() && sent) {
+            plugin.getLogger().info("拾取视图(experience): " + player.getName()
+                    + " +" + amount + " " + displayName);
+        }
+        return sent;
+    }
+
     private boolean show(Player player, ItemStack stack, int amount, String source) {
         PickupSettings settings = plugin.getSettings().getPickup();
         if (!settings.isEnabled() || !bridge.isAvailable() || !valid(stack) || amount <= 0) return false;
