@@ -35,7 +35,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.2.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.3.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
@@ -149,7 +149,7 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `animation.fade-in-millis`：新提示淡入时间，填 `0` 关闭淡入。
 - `animation.fade-out-millis`：提示消失前淡出时间，填 `0` 关闭淡出。
 - `animation.max-entries`：屏幕最多保留几条提示；新的在最下面，旧的向上叠。
-- `animation.stack-spacing`：每层之间的上下间距，单位像素。
+- `animation.stack-spacing`：每层之间的上下间距，单位像素；多条提示挤在一起时调大，默认 `34`。
 - `animation.slide-pixels`：新提示从右侧滑入的距离，填 `0` 关闭滑入。
 - `animation.slide-speed`：新提示滑入速度，`1.0` 表示立即到位。
 - `animation.stack-move-speed`：旧提示被顶到上一层时的移动速度，`1.0` 表示立即到位。
@@ -227,7 +227,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.2.jar`。
+产物：`build/libs/XyBattleHud-1.3.3.jar`。
 
 ## 许可证
 
