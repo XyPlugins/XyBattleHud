@@ -2,6 +2,14 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-08-18 - v1.3.6 MythicMobs 金币拾取
+
+- 根据服主说明当前金币来自 MythicMobs `Drops: - money 10 1`，实际由 Vault 发放余额。
+- 选择软监听 MythicMobs `MythicMobLootDropEvent` 的 `getMoney()`，不监听 Vault 余额变化，避免非掉落来源误显示。
+- 新增 `MoneySettings` 与 `pickup.money` 中文配置段，金币显示名、图标路径和重复合并时间可改。
+- 新增 `MythicMobsMoneyBridge`，通过反射兼容新版 `io.lumine.mythic...` 和旧版 `io.lumine.xikage...` 事件包名，不把 MythicMobs/Vault 作为硬依赖。
+- DragonCore 拾取视图把 `money` 归入文本模式，与经验一样显示图标、名称和数量，不走物品槽缓存。
+
 ## 2026-08-18 - v1.3.5 经验去重与拾取位置配置
 
 - 根据服主截图确认同一笔 `经验 +10` 被显示成两条拾取提示。

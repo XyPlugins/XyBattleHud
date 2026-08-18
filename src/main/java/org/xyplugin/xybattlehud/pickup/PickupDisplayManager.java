@@ -28,18 +28,28 @@ public final class PickupDisplayManager {
     }
 
     public boolean showExperience(Player player, long amount, String displayName, String iconPath) {
+        return showText(player, amount, "experience", displayName, iconPath);
+    }
+
+    public boolean showMoney(Player player, long amount, String displayName, String iconPath) {
         PickupSettings settings = plugin.getSettings().getPickup();
-        if (!settings.isEnabled() || !settings.getExperience().isEnabled()
-                || !bridge.isAvailable() || player == null || !player.isOnline() || amount <= 0) {
+        if (!settings.getMoney().isEnabled()) return false;
+        return showText(player, amount, "money", displayName, iconPath);
+    }
+
+    private boolean showText(Player player, long amount, String source, String displayName, String iconPath) {
+        PickupSettings settings = plugin.getSettings().getPickup();
+        if (!settings.isEnabled() || !bridge.isAvailable()
+                || player == null || !player.isOnline() || amount <= 0) {
             return false;
         }
         String token = player.getUniqueId().toString().substring(0, 8) + "_"
                 + Long.toString(sequence.incrementAndGet(), 36);
-        boolean sent = bridge.showExperience(player, settings.getHudName(), settings.getFunctionName(),
-                token, amount, displayName, iconPath, settings.getAnimation(),
+        boolean sent = bridge.showText(player, settings.getHudName(), settings.getFunctionName(),
+                token, amount, source, displayName, iconPath, settings.getAnimation(),
                 settings.getRightOffset(), settings.getBottomOffset());
         if (plugin.isDebugEnabled() && sent) {
-            plugin.getLogger().info("拾取视图(experience): " + player.getName()
+            plugin.getLogger().info("拾取视图(" + source + "): " + player.getName()
                     + " +" + amount + " " + displayName);
         }
         return sent;

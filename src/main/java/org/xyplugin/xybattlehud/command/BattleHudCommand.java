@@ -44,6 +44,7 @@ public final class BattleHudCommand implements CommandExecutor, TabCompleter {
                         + " | 龙核拾取: " + (plugin.getPickupDisplays().isAvailable() ? "可用" : "不可用")
                         + " | 灵魂仓库拾取: " + (plugin.getSoulSpacePickupBridge().isAvailable() ? "可用" : "不可用")
                         + " | 经验事件: " + (plugin.getAkariLevelExpBridge().isAvailable() ? "可用" : "不可用")
+                        + " | 金币事件: " + (plugin.getMythicMobsMoneyBridge().isAvailable() ? "可用" : "不可用")
                         + " | 显示: " + (plugin.getHolograms().size() + plugin.getComboDisplays().size()));
                 return true;
             case "clear":

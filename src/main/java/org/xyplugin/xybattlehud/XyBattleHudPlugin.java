@@ -15,6 +15,7 @@ import org.xyplugin.xybattlehud.display.HologramManager;
 import org.xyplugin.xybattlehud.pickup.PickupDisplayManager;
 import org.xyplugin.xybattlehud.pickup.PickupListener;
 import org.xyplugin.xybattlehud.pickup.AkariLevelExpBridge;
+import org.xyplugin.xybattlehud.pickup.MythicMobsMoneyBridge;
 import org.xyplugin.xybattlehud.pickup.SoulSpacePickupBridge;
 
 public final class XyBattleHudPlugin extends JavaPlugin {
@@ -28,6 +29,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     private PickupDisplayManager pickupDisplays;
     private SoulSpacePickupBridge soulSpacePickupBridge;
     private AkariLevelExpBridge akariLevelExpBridge;
+    private MythicMobsMoneyBridge mythicMobsMoneyBridge;
     private boolean runtimeDebug;
 
     @Override
@@ -47,6 +49,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         pickupDisplays = new PickupDisplayManager(this);
         soulSpacePickupBridge = new SoulSpacePickupBridge(this);
         akariLevelExpBridge = new AkariLevelExpBridge(this);
+        mythicMobsMoneyBridge = new MythicMobsMoneyBridge(this);
         reloadServices();
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new PickupListener(this), this);
@@ -83,6 +86,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
         attributePlusBridge.register();
         soulSpacePickupBridge.register();
         akariLevelExpBridge.register();
+        mythicMobsMoneyBridge.register();
     }
 
     public PluginSettings getSettings() { return settings; }
@@ -95,6 +99,7 @@ public final class XyBattleHudPlugin extends JavaPlugin {
     public PickupDisplayManager getPickupDisplays() { return pickupDisplays; }
     public SoulSpacePickupBridge getSoulSpacePickupBridge() { return soulSpacePickupBridge; }
     public AkariLevelExpBridge getAkariLevelExpBridge() { return akariLevelExpBridge; }
+    public MythicMobsMoneyBridge getMythicMobsMoneyBridge() { return mythicMobsMoneyBridge; }
 
     public void clearDisplays() {
         holograms.clear();

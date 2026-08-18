@@ -61,18 +61,18 @@ final class DragonCorePickupBridge {
         }
     }
 
-    boolean showExperience(Player player, String hudName, String functionName, String token,
-                           long amount, String displayName, String iconPath,
-                           PickupAnimationSettings animation, int rightOffset, int bottomOffset) {
+    boolean showText(Player player, String hudName, String functionName, String token,
+                     long amount, String source, String displayName, String iconPath,
+                     PickupAnimationSettings animation, int rightOffset, int bottomOffset) {
         if (!isAvailable() || player == null || !player.isOnline()) return false;
         try {
             openHudIfNeeded(player, hudName);
-            String function = createFunction(functionName, token, amount, "experience",
+            String function = createFunction(functionName, token, amount, source,
                     displayName, iconPath, animation, rightOffset, bottomOffset);
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
         } catch (Exception failure) {
-            if (plugin.isDebugEnabled()) plugin.getLogger().warning("发送经验拾取视图失败: " + failure.getMessage());
+            if (plugin.isDebugEnabled()) plugin.getLogger().warning("发送数值拾取视图失败: " + failure.getMessage());
             return false;
         }
     }

@@ -1,6 +1,6 @@
 # XyBattleHud
 
-`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore HUD 固定在屏幕位置显示，拾取提示通过 DragonCore HUD 显示真实物品图标、经验图标、名称和数量。
+`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore HUD 固定在屏幕位置显示，拾取提示通过 DragonCore HUD 显示真实物品图标、经验/金币图标、名称和数量。
 
 当前版本专注于伤害类型字形、连击显示和拾取提示，不包含怪物血条等无关功能。
 
@@ -18,6 +18,7 @@
 - 拾取提示可配置屏幕位置、显示时长、淡入淡出、最大层数、层间距、滑入速度和上移速度。
 - 经验获得时可在右下角显示经验提示，显示名和图标都能在 `config.yml` 改，并固定使用头颅拾取框。
 - 经验提示内置短时间去重，避免同一笔经验被等级插件重复抛出时显示两条。
+- MythicMobs `money` 掉落可显示金币提示，显示名和图标都能在 `config.yml` 改。
 - 兼容 XySoulSpace 自动拾取；普通背包拾取、灵魂空间拾取和物品品质可以选择不同拾取框。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
@@ -32,18 +33,20 @@
 - DragonCore：伤害字体映射本身不要求服务端 API；启用连击 HUD 和拾取 HUD 时必须安装。
 - 可选：XySoulSpace。启用自动拾取入库时，本插件会软监听其 `XySoulSpaceItemDepositEvent`。
 - 可选：AkariLevel。启用经验拾取时，本插件会软监听其经验变更事件。
+- 可选：MythicMobs + Vault。启用金币拾取时，本插件会软监听 MythicMobs 的 money 掉落事件。
 - 客户端：DragonCore 字体配置、伤害数字 PNG、连击 PNG 和拾取框 PNG。
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.5.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.6.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
 5. 把连击数字、`连击数_1.png`、`连击数_2.png` 与品质拾取框 PNG 放到客户端 `DragonCore/战斗视图/拾取视图/`；默认框使用白描两张图片。
 6. 如果要显示经验拾取，确认客户端有 `战斗视图/属性图标/经验加成图标.png`，并在 `config.yml` 里改 `pickup.experience`。
-7. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
-8. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取、AkariLevel 经验桥和灵魂仓库拾取状态。
+7. 如果要显示金币拾取，确认客户端有 `战斗视图/属性图标/金币图标.png`，并在 `config.yml` 里改 `pickup.money`。
+8. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
+9. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取、AkariLevel 经验桥、MythicMobs 金币桥和灵魂仓库拾取状态。
 
 默认字形采用已验证的艾尔字体字符：
 
@@ -79,6 +82,8 @@ AttributePlus / Bukkit 伤害事件
 
 经验拾取不走物品缓存。XyBattleHud 监听 AkariLevel 的经验变更事件，拿到本次增加的经验值后，把可配置的经验名称和图标路径发给 DragonCore HUD。经验来源固定使用头颅拾取框，不参与物品品质框匹配。
 
+金币拾取也不走物品缓存。MythicMobs 的 `money 10 1` 会通过 Vault 给击杀者发钱，XyBattleHud 只监听 MythicMobs 的本次 money 掉落事件，拿到金币数量后发给 DragonCore HUD。它不会监听 Vault 余额变化，所以商店、转账、指令发钱不会弹拾取框。
+
 ```text
 PlayerPickupItemEvent / XySoulSpaceItemDepositEvent
         -> XyBattleHud 计算本次拾取数量
@@ -92,6 +97,13 @@ AkariLevel MemberExpChangeEvent
         -> XyBattleHud 读取本次经验增量
         -> 调用 XyBattleHud拾取视图.yml 的 创建拾取(experience)
         -> 客户端 HUD 显示经验图标、经验名称和数值
+```
+
+```text
+MythicMobs money 掉落
+        -> XyBattleHud 读取本次金币数量
+        -> 调用 XyBattleHud拾取视图.yml 的 创建拾取(money)
+        -> 客户端 HUD 显示金币图标、金币名称和数值
 ```
 
 ## 配置
@@ -169,6 +181,12 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `experience.display-name`：经验提示里显示的名字。
 - `experience.icon`：经验提示图标路径。
 - `experience.dedupe-millis`：短时间内同玩家同数值经验只显示一次，默认 `250`；填 `0` 关闭。
+- `money.enabled`：是否显示 MythicMobs money 掉落提示。
+- `money.mythicmobs-enabled`：是否接入 MythicMobs 掉落事件。
+- `money.provider-plugin`：MythicMobs 插件名，默认 `MythicMobs`。
+- `money.display-name`：金币提示里显示的名字。
+- `money.icon`：金币提示图标路径。
+- `money.dedupe-millis`：同一只怪同一笔 money 掉落短时间内只显示一次，默认 `250`；填 `0` 关闭。
 
 普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
 
@@ -222,6 +240,7 @@ XyCore 是软依赖，不能阻止 XyBattleHud 启动。它提供 `XyCore.get().
 - DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击 HUD、拾取 HUD 和经验 HUD 不会显示。
 - XySoulSpace 未安装时不影响普通拾取提示；只是不显示灵魂仓库自动拾取入库提示。
 - AkariLevel 未安装或未成功启用时，不影响普通拾取和连击，只是不显示经验拾取提示。
+- MythicMobs 或 Vault 未安装时不影响普通拾取、经验和连击，只是不显示 MythicMobs money 金币提示。
 
 ## 构建
 
@@ -231,7 +250,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.5.jar`。
+产物：`build/libs/XyBattleHud-1.3.6.jar`。
 
 ## 许可证
 
