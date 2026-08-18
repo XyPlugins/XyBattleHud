@@ -7,6 +7,7 @@ public final class PickupSettings {
     private final boolean soulSpaceEnabled;
     private final boolean soulSpaceFrameEnabled;
     private final ExperienceSettings experience;
+    private final PickupAnimationSettings animation;
     private final String hudName;
     private final String functionName;
     private final String cachePrefix;
@@ -16,6 +17,7 @@ public final class PickupSettings {
         soulSpaceEnabled = config.getBoolean("pickup.soul-space-enabled", true);
         soulSpaceFrameEnabled = config.getBoolean("pickup.soul-space-frame-enabled", true);
         experience = ExperienceSettings.load(config);
+        animation = PickupAnimationSettings.load(config);
         hudName = nonEmpty(config.getString("pickup.hud-name"), "XyBattleHud拾取视图");
         functionName = nonEmpty(config.getString("pickup.function-name"), "创建拾取");
         cachePrefix = nonEmpty(config.getString("pickup.cache-prefix"), "xybh_pickup_item_");
@@ -34,6 +36,7 @@ public final class PickupSettings {
     public boolean isSoulSpaceEnabled() { return soulSpaceEnabled; }
     public boolean isSoulSpaceFrameEnabled() { return soulSpaceFrameEnabled; }
     public ExperienceSettings getExperience() { return experience; }
+    public PickupAnimationSettings getAnimation() { return animation; }
     public String getHudName() { return hudName; }
     public String getFunctionName() { return functionName; }
     public String getCachePrefix() { return cachePrefix; }

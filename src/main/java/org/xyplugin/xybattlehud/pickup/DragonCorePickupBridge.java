@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.xyplugin.xybattlehud.XyBattleHudPlugin;
+import org.xyplugin.xybattlehud.config.PickupAnimationSettings;
 
 import java.lang.reflect.Method;
 
@@ -40,12 +41,12 @@ final class DragonCorePickupBridge {
     }
 
     boolean show(Player player, String hudName, String functionName, String cacheKey, String token,
-                 ItemStack item, int amount, String source) {
+                 ItemStack item, int amount, String source, PickupAnimationSettings animation) {
         if (!isAvailable() || player == null || !player.isOnline() || item == null) return false;
         try {
             putClientSlotItem.invoke(null, player, cacheKey, item);
             sendOpenHud.invoke(null, player, hudName);
-            String function = createFunction(functionName, token, amount, source, "", "");
+            String function = createFunction(functionName, token, amount, source, "", "", animation);
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
         } catch (Exception failure) {
@@ -55,12 +56,13 @@ final class DragonCorePickupBridge {
     }
 
     boolean showExperience(Player player, String hudName, String functionName, String token,
-                           long amount, String displayName, String iconPath) {
+                           long amount, String displayName, String iconPath,
+                           PickupAnimationSettings animation) {
         if (!isAvailable() || player == null || !player.isOnline()) return false;
         try {
             sendOpenHud.invoke(null, player, hudName);
             String function = createFunction(functionName, token, amount, "experience",
-                    displayName, iconPath);
+                    displayName, iconPath, animation);
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
         } catch (Exception failure) {
@@ -70,11 +72,19 @@ final class DragonCorePickupBridge {
     }
 
     private String createFunction(String functionName, String token, long amount, String source,
-                                  String displayName, String iconPath) {
+                                  String displayName, String iconPath, PickupAnimationSettings animation) {
         return "方法.执行方法('" + escape(functionName) + "','"
                 + escape(token) + "','" + Math.max(1L, amount) + "','"
                 + escape(source) + "','" + escape(displayName) + "','"
-                + escape(iconPath) + "');";
+                + escape(iconPath) + "','"
+                + animation.getDurationMillis() + "','"
+                + animation.getFadeInMillis() + "','"
+                + animation.getFadeOutMillis() + "','"
+                + animation.getMaxEntries() + "','"
+                + animation.getStackSpacing() + "','"
+                + animation.getSlidePixels() + "','"
+                + animation.getSlideSpeed() + "','"
+                + animation.getStackMoveSpeed() + "');";
     }
 
     private String escape(String value) {

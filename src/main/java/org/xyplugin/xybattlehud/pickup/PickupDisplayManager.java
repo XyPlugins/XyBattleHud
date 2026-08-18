@@ -36,7 +36,7 @@ public final class PickupDisplayManager {
         String token = player.getUniqueId().toString().substring(0, 8) + "_"
                 + Long.toString(sequence.incrementAndGet(), 36);
         boolean sent = bridge.showExperience(player, settings.getHudName(), settings.getFunctionName(),
-                token, amount, displayName, iconPath);
+                token, amount, displayName, iconPath, settings.getAnimation());
         if (plugin.isDebugEnabled() && sent) {
             plugin.getLogger().info("拾取视图(experience): " + player.getName()
                     + " +" + amount + " " + displayName);
@@ -53,7 +53,7 @@ public final class PickupDisplayManager {
         ItemStack display = stack.clone();
         display.setAmount(Math.max(1, Math.min(display.getMaxStackSize(), amount)));
         boolean sent = bridge.show(player, settings.getHudName(), settings.getFunctionName(),
-                cacheKey, token, display, amount, source);
+                cacheKey, token, display, amount, source, settings.getAnimation());
         if (plugin.isDebugEnabled() && sent) {
             plugin.getLogger().info("拾取视图(" + source + "): " + player.getName()
                     + " x" + amount + " " + stack.getType());
