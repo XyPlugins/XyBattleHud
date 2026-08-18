@@ -38,7 +38,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.7.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.8.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
@@ -78,7 +78,7 @@ AttributePlus / Bukkit 伤害事件
         -> 客户端 HUD 固定显示数字图片 + 连击数图片
 ```
 
-拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`；当前资源包的两套框视觉是反着摆的，所以拾取视图里把这两个来源的显示图反过来套了一层。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
+拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`。当前资源包基础白描框文件名与视觉相反，所以未匹配品质时会兼容反向套用；命中品质后按文件名正常选择，普通背包使用 `品质普通拾取框N`，灵魂空间使用 `品质灵魂拾取框N`。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
 
 经验拾取不走物品缓存。XyBattleHud 监听 AkariLevel 的经验变更事件，拿到本次增加的经验值后，把可配置的经验名称和图标路径发给 DragonCore HUD。经验来源固定使用头颅拾取框，不参与物品品质框匹配。
 
@@ -206,7 +206,8 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/X
 - `品质判断词0-10`：在物品名称或 Lore 中查找的关键词。
 - `品质普通拾取框0-10`：匹配后、进入玩家背包时使用的 PNG 路径。
 - `品质灵魂拾取框0-10`：匹配后、自动进入灵魂空间时使用的 PNG 路径。
-- 当前客户端资源包里两套框视觉和命名相反，HUD 创建时会反向套用：普通背包显示头颅框，灵魂空间显示箱子框。
+- 当前客户端资源包里基础白描框文件名与视觉相反，所以未匹配品质时会兼容反向套用。
+- 带品质的框按文件名正常选择：普通背包显示 `品质普通拾取框N`，灵魂空间显示 `品质灵魂拾取框N`。
 - 匹配从 `10` 到 `0` 执行，数字越大优先级越高。
 - `品质拾取框启用: false` 时只按普通/灵魂空间来源选择框。
 - 当前已写入白描、萌黄、气象、极意、归元、传神、浮世两套图片路径；待锻造复用白描框。
@@ -257,7 +258,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.7.jar`。
+产物：`build/libs/XyBattleHud-1.3.8.jar`。
 
 ## 许可证
 
