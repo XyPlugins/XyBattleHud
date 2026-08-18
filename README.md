@@ -35,7 +35,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.1.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.2.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
@@ -227,7 +227,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.1.jar`。
+产物：`build/libs/XyBattleHud-1.3.2.jar`。
 
 ## 许可证
 

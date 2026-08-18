@@ -62,7 +62,12 @@ public final class PickupDisplayManager {
     }
 
     public void reload() {
+        bridge.clearOpenedHuds();
         bridge.discover();
+    }
+
+    public void forget(Player player) {
+        bridge.forget(player);
     }
 
     public boolean isAvailable() {

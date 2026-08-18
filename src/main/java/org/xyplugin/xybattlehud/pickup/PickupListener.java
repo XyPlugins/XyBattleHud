@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.xyplugin.xybattlehud.XyBattleHudPlugin;
 
@@ -28,6 +29,11 @@ public final class PickupListener implements Listener {
         int amount = PickupAmounts.pickedAmount(stack.getAmount(), event.getRemaining());
         if (amount <= 0) return;
         plugin.getPickupDisplays().show(player, stack, amount);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.getPickupDisplays().forget(event.getPlayer());
     }
 
     private boolean valid(ItemStack stack) {

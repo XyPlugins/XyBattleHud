@@ -7,9 +7,13 @@ import org.xyplugin.xybattlehud.XyBattleHudPlugin;
 import org.xyplugin.xybattlehud.config.PickupAnimationSettings;
 
 import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 final class DragonCorePickupBridge {
     private final XyBattleHudPlugin plugin;
+    private final Set<UUID> openedHuds = ConcurrentHashMap.newKeySet();
     private Method sendOpenHud;
     private Method putClientSlotItem;
     private Method sendRunFunction;
@@ -45,7 +49,7 @@ final class DragonCorePickupBridge {
         if (!isAvailable() || player == null || !player.isOnline() || item == null) return false;
         try {
             putClientSlotItem.invoke(null, player, cacheKey, item);
-            sendOpenHud.invoke(null, player, hudName);
+            openHudIfNeeded(player, hudName);
             String function = createFunction(functionName, token, amount, source, "", "", animation);
             sendRunFunction.invoke(null, player, hudName, function, false);
             return true;
@@ -60,7 +64,7 @@ final class DragonCorePickupBridge {
                            PickupAnimationSettings animation) {
         if (!isAvailable() || player == null || !player.isOnline()) return false;
         try {
-            sendOpenHud.invoke(null, player, hudName);
+            openHudIfNeeded(player, hudName);
             String function = createFunction(functionName, token, amount, "experience",
                     displayName, iconPath, animation);
             sendRunFunction.invoke(null, player, hudName, function, false);
@@ -69,6 +73,21 @@ final class DragonCorePickupBridge {
             if (plugin.isDebugEnabled()) plugin.getLogger().warning("发送经验拾取视图失败: " + failure.getMessage());
             return false;
         }
+    }
+
+    void forget(Player player) {
+        if (player != null) openedHuds.remove(player.getUniqueId());
+    }
+
+    void clearOpenedHuds() {
+        openedHuds.clear();
+    }
+
+    private void openHudIfNeeded(Player player, String hudName) throws Exception {
+        UUID uuid = player.getUniqueId();
+        if (openedHuds.contains(uuid)) return;
+        sendOpenHud.invoke(null, player, hudName);
+        openedHuds.add(uuid);
     }
 
     private String createFunction(String functionName, String token, long amount, String source,
