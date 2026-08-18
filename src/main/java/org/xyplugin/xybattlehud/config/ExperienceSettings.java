@@ -20,6 +20,7 @@ public final class ExperienceSettings {
     private final List<String> sources;
     private final String displayName;
     private final String iconPath;
+    private final int dedupeMillis;
 
     private ExperienceSettings(FileConfiguration config) {
         enabled = config.getBoolean("pickup.experience.enabled", true);
@@ -36,6 +37,7 @@ public final class ExperienceSettings {
         displayName = nonEmpty(config.getString("pickup.experience.display-name"), "经验");
         iconPath = nonEmpty(config.getString("pickup.experience.icon"),
                 "战斗视图/属性图标/经验加成图标.png");
+        dedupeMillis = clamp(config.getInt("pickup.experience.dedupe-millis", 250), 0, 5000);
     }
 
     static ExperienceSettings load(FileConfiguration config) {
@@ -69,6 +71,10 @@ public final class ExperienceSettings {
     private static String nonEmpty(String value, String fallback) {
         String result = value(value);
         return result.isEmpty() ? fallback : result;
+    }
+
+    private static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     public boolean isEnabled() {
@@ -117,5 +123,9 @@ public final class ExperienceSettings {
 
     public String getIconPath() {
         return iconPath;
+    }
+
+    public int getDedupeMillis() {
+        return dedupeMillis;
     }
 }

@@ -11,6 +11,8 @@ public final class PickupSettings {
     private final String hudName;
     private final String functionName;
     private final String cachePrefix;
+    private final int rightOffset;
+    private final int bottomOffset;
 
     private PickupSettings(FileConfiguration config) {
         enabled = config.getBoolean("pickup.enabled", true);
@@ -21,6 +23,8 @@ public final class PickupSettings {
         hudName = nonEmpty(config.getString("pickup.hud-name"), "XyBattleHud拾取视图");
         functionName = nonEmpty(config.getString("pickup.function-name"), "创建拾取");
         cachePrefix = nonEmpty(config.getString("pickup.cache-prefix"), "xybh_pickup_item_");
+        rightOffset = clamp(config.getInt("pickup.position.right", 8), 1, 2000);
+        bottomOffset = clamp(config.getInt("pickup.position.bottom", 74), 1, 2000);
     }
 
     static PickupSettings load(FileConfiguration config) {
@@ -32,6 +36,10 @@ public final class PickupSettings {
         return value.trim();
     }
 
+    private static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
     public boolean isEnabled() { return enabled; }
     public boolean isSoulSpaceEnabled() { return soulSpaceEnabled; }
     public boolean isSoulSpaceFrameEnabled() { return soulSpaceFrameEnabled; }
@@ -40,4 +48,6 @@ public final class PickupSettings {
     public String getHudName() { return hudName; }
     public String getFunctionName() { return functionName; }
     public String getCachePrefix() { return cachePrefix; }
+    public int getRightOffset() { return rightOffset; }
+    public int getBottomOffset() { return bottomOffset; }
 }

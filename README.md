@@ -15,8 +15,9 @@
 - 连击位置、数字大小、样式图片大小在 DragonCore 连击视图 YML 中调整，计数最大为 `999`。
 - 连击采用 DragonCore HUD，不使用 ArmorStand 名称，因此没有字体图片黑底，也不会跟随怪物漂浮。
 - 玩家拾取物品后可在右下角显示拾取框、真实物品图标、物品名和本次数量。
-- 拾取提示可配置显示时长、淡入淡出、最大层数、层间距、滑入速度和上移速度。
+- 拾取提示可配置屏幕位置、显示时长、淡入淡出、最大层数、层间距、滑入速度和上移速度。
 - 经验获得时可在右下角显示经验提示，显示名和图标都能在 `config.yml` 改，并固定使用头颅拾取框。
+- 经验提示内置短时间去重，避免同一笔经验被等级插件重复抛出时显示两条。
 - 兼容 XySoulSpace 自动拾取；普通背包拾取、灵魂空间拾取和物品品质可以选择不同拾取框。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
@@ -35,7 +36,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.4.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.5.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
@@ -145,6 +146,8 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `hud-name`：DragonCore GUI/HUD 文件名，不写 `.yml`。
 - `function-name`：HUD 中创建拾取框的函数名，默认 `创建拾取`。
 - `cache-prefix`：DragonCore 临时物品缓存前缀，一般不改。
+- `position.right`：拾取框距离屏幕右边多少像素；数值越大越往左。
+- `position.bottom`：拾取框距离屏幕底部多少像素；数值越大越往上。
 - `animation.duration-millis`：单条拾取提示总显示时间。
 - `animation.fade-in-millis`：新提示淡入时间，稳定队列模式默认关闭。
 - `animation.fade-out-millis`：提示消失前淡出时间，填 `0` 关闭淡出。
@@ -165,10 +168,11 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `experience.sources`：只接收某些来源字符串，留空表示全部。
 - `experience.display-name`：经验提示里显示的名字。
 - `experience.icon`：经验提示图标路径。
+- `experience.dedupe-millis`：短时间内同玩家同数值经验只显示一次，默认 `250`；填 `0` 关闭。
 
 普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
 
-DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，优先修改文件里 `拾取背景` 的 `x/y` 注释区域；普通框、灵魂空间框、经验图标和品质框路径都在文件顶部 `图片` 段修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
+DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整位置时，改 `config.yml -> pickup.position.right/bottom`；普通框、灵魂空间框、经验图标和品质框路径都在文件顶部 `图片` 段修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
 
 ### 品质拾取框
 
@@ -227,7 +231,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.4.jar`。
+产物：`build/libs/XyBattleHud-1.3.5.jar`。
 
 ## 许可证
 

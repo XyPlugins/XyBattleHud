@@ -1,5 +1,21 @@
 # AI 使用记录
 
+## 1.3.5
+
+本次修改由 AI 根据服主截图反馈“实际只有 10 的经验，但重复显示了两次；拾取提示位置能不能在配置里调”辅助完成。
+
+已确认的实现边界：
+
+- 不改拾取队列层叠逻辑，继续使用 v1.3.4 对齐 Yee 的稳定 `index` 方案。
+- 经验去重只作用于 AkariLevel 经验提示，默认 `250ms` 内同玩家同数值同显示配置只显示一次。
+- `pickup.experience.dedupe-millis: 0` 可关闭合并；如果现场仍重复，可以略微调大。
+- 拾取 HUD 的右边距和底边距改为 `config.yml -> pickup.position.right/bottom` 控制。
+- 这版需要同时替换服务端 jar 和 `plugins/DragonCore/Gui/XyBattleHud拾取视图.yml`。
+
+验证记录：
+
+- 已执行 `gradlew.bat clean test jar`，构建通过。
+
 ## 1.3.4
 
 本次修改由 AI 根据服主反馈“这一版问题更大，开始显示若隐若现；先回头看看 Yee 的拾取视图怎么写”辅助完成。

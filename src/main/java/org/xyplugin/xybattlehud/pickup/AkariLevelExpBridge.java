@@ -13,11 +13,15 @@ import org.xyplugin.xybattlehud.config.ExperienceSettings;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class AkariLevelExpBridge implements Listener {
     private final XyBattleHudPlugin plugin;
+    private final Map<String, Long> recentExperiences = new ConcurrentHashMap<>();
     private boolean available;
+    private int cleanupCounter;
 
     public AkariLevelExpBridge(XyBattleHudPlugin plugin) {
         this.plugin = plugin;
@@ -25,6 +29,8 @@ public final class AkariLevelExpBridge implements Listener {
 
     public void register() {
         HandlerList.unregisterAll(this);
+        recentExperiences.clear();
+        cleanupCounter = 0;
         available = false;
         ExperienceSettings settings = plugin.getSettings().getPickup().getExperience();
         if (!plugin.getSettings().getPickup().isEnabled()
@@ -60,12 +66,40 @@ public final class AkariLevelExpBridge implements Listener {
 
         Player player = findPlayer(text(read(event, settings.getMemberVariable())));
         if (player == null) return;
+        if (isDuplicateExperience(settings, player, amount, levelGroup)) {
+            if (plugin.isDebugEnabled()) {
+                plugin.getLogger().info("拾取视图(experience): 已合并重复经验提示 "
+                        + player.getName() + " +" + amount);
+            }
+            return;
+        }
         boolean sent = plugin.getPickupDisplays().showExperience(player, amount,
                 settings.getDisplayName(), settings.getIconPath());
         if (plugin.isDebugEnabled() && sent) {
             plugin.getLogger().info("拾取视图(experience): " + player.getName()
                     + " +" + amount + " (" + source + ")");
         }
+    }
+
+    private boolean isDuplicateExperience(ExperienceSettings settings, Player player, long amount, String levelGroup) {
+        int window = settings.getDedupeMillis();
+        if (window <= 0) return false;
+        long now = System.currentTimeMillis();
+        String key = player.getUniqueId() + "|" + amount + "|" + levelGroup + "|"
+                + settings.getDisplayName() + "|" + settings.getIconPath();
+        Long previous = recentExperiences.get(key);
+        if (previous != null && now - previous <= window) return true;
+        recentExperiences.put(key, now);
+        cleanupRecentExperiences(now, window);
+        return false;
+    }
+
+    private void cleanupRecentExperiences(long now, int window) {
+        cleanupCounter++;
+        if (cleanupCounter < 64) return;
+        cleanupCounter = 0;
+        long expireBefore = now - Math.max(5000L, window * 4L);
+        recentExperiences.entrySet().removeIf(entry -> entry.getValue() < expireBefore);
     }
 
     private Player findPlayer(String member) {

@@ -1,5 +1,12 @@
 # 更新记录
 
+## v1.3.5 - 2026-08-18
+
+- 修复 AkariLevel 某些情况下同一笔经验提示重复显示两次的问题。
+- 新增 `pickup.experience.dedupe-millis`，短时间内同玩家同数值经验只显示一次；填 `0` 可关闭合并。
+- 新增 `pickup.position.right` 与 `pickup.position.bottom`，拾取 HUD 右下角位置现在可直接在服务端配置中调整。
+- DragonCore 拾取视图读取服务端传入的位置参数，不再需要手改 `w-8` / `h-74`。
+
 ## v1.3.4 - 2026-08-18
 
 - 对照 YeeCombatView 拾取视图，拾取队列回退为稳定的 `index` 叠层写法。
