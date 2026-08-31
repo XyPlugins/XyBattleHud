@@ -1,0 +1,33 @@
+# XyBattleHud 伤害飘字 HeadTag
+# 放置位置：plugins/DragonCore/HeadTag/XyBattleHud伤害飘字.yml
+# 如果你的 DragonCore 目录叫 Headtag，也可以放到 plugins/DragonCore/Headtag/，Windows 服务器通常不区分大小写。
+# 这个文件负责用 DragonCore label 重新显示伤害文字，从而关闭原版名字的黑影。
+
+# 必须和 XyBattleHud config.yml -> display.headtag-marker 保持一致。
+标记: 'XYBH_DAMAGE:'
+
+# 匹配 XyBattleHud 创建的临时 ArmorStand 实体名。
+match:
+- XYBH_DAMAGE:
+contains: true
+display: always
+
+# 整体高度。伤害实际高度主要由 XyBattleHud config.yml -> display.height-offset 控制。
+offsetY: 0
+
+显示:
+  # 文字缩放，1 为原大小。
+  scale: 1
+  # 细调上下位置，负数往上，正数往下。
+  y: 0
+
+伤害文字:
+  type: label
+  x: 0-伤害文字.width/2
+  y: 方法.取Yaml值('显示.y')
+  # 去掉前面的识别标记，只显示真正的伤害字符。
+  text: 方法.替换(方法.取实体名, 方法.取Yaml值('标记'), '')
+  scale: 方法.取Yaml值('显示.scale')
+  # 关键项：false = 不画文字阴影，也就不会出现字体图片后面的黑影。
+  shadow: false
+  visible: true

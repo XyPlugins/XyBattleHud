@@ -1,5 +1,13 @@
 # 更新记录
 
+## v1.3.9 - 2026-09-01
+
+- 新增 `display.renderer`，伤害飘字可在旧版 `armorstand` 和新版 `dragoncore-headtag` 之间切换。
+- `dragoncore-headtag` 模式下，服务端仍创建临时 ArmorStand 负责位置和上浮，但隐藏原版名字，并用 `display.headtag-marker` 写入给 DragonCore 识别的标记。
+- 新增 `dragoncore/HeadTag/XyBattleHud伤害飘字.yml`，通过 DragonCore `label shadow: false` 显示伤害字符，避免原版实体名字的黑影。
+- `/xybh info` 增加当前伤害渲染模式，方便现场确认是否已经切到 HeadTag。
+- README、默认配置、AI 使用记录和 AI 更新记录同步补充去黑影说明。
+
 ## v1.3.8 - 2026-08-19
 
 - 修复带品质检测的普通背包框与灵魂空间框被反向套用的问题。

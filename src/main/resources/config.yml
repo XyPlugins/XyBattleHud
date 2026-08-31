@@ -1,8 +1,15 @@
-# XyBattleHud 1.3.8
+# XyBattleHud 1.3.9
 # 伤害数字由服务端发送字符，DragonCore 字体配置负责把字符画成图片。
 
 # 伤害数字显示设置。
 display:
+  # 伤害飘字渲染方式。
+  # armorstand = 原版实体名字，兼容最好，但字体图片会带原版黑影。
+  # dragoncore-headtag = 使用 DragonCore HeadTag 的 label 显示，可通过 shadow: false 去掉黑影。
+  # 使用 dragoncore-headtag 时，需要把 dragoncore/HeadTag/XyBattleHud伤害飘字.yml 放到 plugins/DragonCore/HeadTag/。
+  renderer: 'dragoncore-headtag'
+  # 给 DragonCore HeadTag 识别用的实体名前缀；如果改这里，HeadTag YML 里的 match 和替换内容也要一起改。
+  headtag-marker: 'XYBH_DAMAGE:'
   # 显示时长，20 tick = 1 秒。
   duration-ticks: 40
   # 相对受击目标眼睛的高度。

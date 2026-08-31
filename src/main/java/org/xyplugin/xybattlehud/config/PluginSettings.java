@@ -17,7 +17,33 @@ import java.util.Map;
 import java.util.Set;
 
 public final class PluginSettings {
+    public enum DamageRenderer {
+        ARMORSTAND("armorstand"),
+        DRAGONCORE_HEADTAG("dragoncore-headtag");
+
+        private final String configValue;
+
+        DamageRenderer(String configValue) {
+            this.configValue = configValue;
+        }
+
+        public String getConfigValue() {
+            return configValue;
+        }
+
+        private static DamageRenderer parse(String value) {
+            if (value == null) return ARMORSTAND;
+            String normalized = value.trim().toLowerCase(LocaleHolder.ROOT);
+            if ("dragoncore-headtag".equals(normalized) || "headtag".equals(normalized) || "dragoncore".equals(normalized)) {
+                return DRAGONCORE_HEADTAG;
+            }
+            return ARMORSTAND;
+        }
+    }
+
     private final int durationTicks;
+    private final DamageRenderer damageRenderer;
+    private final String headtagMarker;
     private final double heightOffset;
     private final double floatSpeed;
     private final double randomOffset;
@@ -39,6 +65,9 @@ public final class PluginSettings {
 
     private PluginSettings(FileConfiguration config) {
         durationTicks = Math.max(1, config.getInt("display.duration-ticks", 40));
+        damageRenderer = DamageRenderer.parse(config.getString("display.renderer", "armorstand"));
+        String marker = config.getString("display.headtag-marker", "XYBH_DAMAGE:");
+        headtagMarker = marker == null || marker.isEmpty() ? "XYBH_DAMAGE:" : marker;
         heightOffset = config.getDouble("display.height-offset", 0.45);
         floatSpeed = config.getDouble("display.float-speed", 0.025);
         randomOffset = Math.max(0.0, config.getDouble("display.random-offset", 0.35));
@@ -116,6 +145,9 @@ public final class PluginSettings {
     }
 
     public int getDurationTicks() { return durationTicks; }
+    public DamageRenderer getDamageRenderer() { return damageRenderer; }
+    public boolean isDragonCoreHeadtagDamageRenderer() { return damageRenderer == DamageRenderer.DRAGONCORE_HEADTAG; }
+    public String getHeadtagMarker() { return headtagMarker; }
     public double getHeightOffset() { return heightOffset; }
     public double getFloatSpeed() { return floatSpeed; }
     public double getRandomOffset() { return randomOffset; }

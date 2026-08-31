@@ -39,8 +39,13 @@ public final class HologramManager {
         stand.setBasePlate(false);
         stand.setArms(false);
         stand.setInvulnerable(true);
-        stand.setCustomName(text);
-        stand.setCustomNameVisible(true);
+        if (settings.isDragonCoreHeadtagDamageRenderer()) {
+            stand.setCustomName(settings.getHeadtagMarker() + text);
+            stand.setCustomNameVisible(false);
+        } else {
+            stand.setCustomName(text);
+            stand.setCustomNameVisible(true);
+        }
         active.add(new ActiveHologram(stand, settings.getDurationTicks(), settings.getFloatSpeed()));
     }
 
@@ -85,4 +90,3 @@ public final class HologramManager {
         }
     }
 }
-

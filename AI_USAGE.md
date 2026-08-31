@@ -1,5 +1,21 @@
 # AI 使用记录
 
+## 1.3.9
+
+本次修改由 AI 根据服主反馈“本机类似写法的字体漂浮似乎没有黑影，希望去除伤害字体黑影”辅助完成。
+
+已确认的实现边界：
+
+- 黑影来自原版 `ArmorStand` 实体名字渲染，不是 DragonCore 字体图片本身。
+- 新增 `display.renderer: dragoncore-headtag`，服务端仍用临时 ArmorStand 负责位置、上浮和清理，但隐藏原版名字。
+- 服务端把实体名写成 `XYBH_DAMAGE:` 加伤害字符，DragonCore HeadTag 负责匹配并用 `label shadow: false` 显示真正伤害文字。
+- 保留 `display.renderer: armorstand` 作为旧模式；没有安装 DragonCore 或没有放 HeadTag 文件时可切回旧模式。
+- 这版需要同时替换服务端 jar，并把 `dragoncore/HeadTag/XyBattleHud伤害飘字.yml` 放入 `plugins/DragonCore/HeadTag/`。
+
+验证记录：
+
+- 已执行 `gradlew.bat clean test jar`，构建通过。
+
 ## 1.3.8
 
 本次修改由 AI 根据服主截图反馈“带品质检测的灵魂框和人物框似乎搞反了”辅助完成。

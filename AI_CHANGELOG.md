@@ -2,6 +2,14 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-09-01 - v1.3.9 伤害飘字去黑影
+
+- 根据服主反馈，确认当前伤害数字走 `ArmorStand#setCustomNameVisible(true)` 的原版名字渲染，因此黑影不受 DragonCore 字体 YML 控制。
+- 新增 `display.renderer` 与 `display.headtag-marker` 配置；默认配置使用 `dragoncore-headtag`，旧服务器可改回 `armorstand` 保持原行为。
+- `HologramManager` 在 HeadTag 模式下隐藏原版名字，只把 `XYBH_DAMAGE:` 加伤害字符写入实体名，继续复用原来的上浮与清理任务。
+- 新增 `dragoncore/HeadTag/XyBattleHud伤害飘字.yml`，使用 `match + contains` 匹配标记，用 `方法.替换` 去掉标记，并通过 `shadow: false` 显示无黑影伤害字符。
+- `/xybh info` 增加伤害渲染模式，便于服务器内检查配置是否生效。
+
 ## 2026-08-19 - v1.3.8 品质框来源修正
 
 - 根据服主截图确认普通背包拾取的品质框显示成了带箱子的灵魂空间框。

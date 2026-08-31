@@ -1,13 +1,14 @@
 # XyBattleHud
 
-`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，连击数通过 DragonCore HUD 固定在屏幕位置显示，拾取提示通过 DragonCore HUD 显示真实物品图标、经验/金币图标、名称和数量。
+`XyBattleHud` 是面向 Paper/Spigot 1.12.2 的轻量战斗视图插件。伤害数字通过罕见 Unicode 字符映射为客户端图片，并可交给 DragonCore HeadTag 渲染以去掉原版黑影；连击数通过 DragonCore HUD 固定在屏幕位置显示，拾取提示通过 DragonCore HUD 显示真实物品图标、经验/金币图标、名称和数量。
 
 当前版本专注于伤害类型字形、连击显示和拾取提示，不包含怪物血条等无关功能。
 
 ## 特性
 
 - 监听玩家近战与玩家投射物造成的有效伤害。
-- 使用原生 `ArmorStand` 显示、上浮并自动清理伤害数字，兼容 1.12.2。
+- 使用临时 `ArmorStand` 定位、上浮并自动清理伤害数字，兼容 1.12.2。
+- 伤害飘字支持 `armorstand` 和 `dragoncore-headtag` 两种渲染方式；后者可通过 DragonCore `label shadow: false` 去掉字体图片黑影。
 - 伤害类型完全由 `config.yml -> damage-types` 配置，不包含不同权限组字体功能。
 - 默认支持普通伤害与暴击伤害两套字形。
 - 同一玩家连续攻击同一目标时显示连击数，切换目标或超时后重置。
@@ -30,7 +31,7 @@
 - Paper/Spigot 1.12.2。
 - 可选：AttributePlus，默认属性来源。
 - 可选：XyCore。仅作为稳定的 AttributePlus 读取桥，不是硬依赖。
-- DragonCore：伤害字体映射本身不要求服务端 API；启用连击 HUD 和拾取 HUD 时必须安装。
+- DragonCore：伤害字体映射本身不要求服务端 API；启用伤害 HeadTag 去黑影、连击 HUD 和拾取 HUD 时必须安装。
 - 可选：XySoulSpace。启用自动拾取入库时，本插件会软监听其 `XySoulSpaceItemDepositEvent`。
 - 可选：AkariLevel。启用经验拾取时，本插件会软监听其经验变更事件。
 - 可选：MythicMobs + Vault。启用金币拾取时，本插件会软监听 MythicMobs 的 money 掉落事件。
@@ -38,15 +39,16 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.8.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.9.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
-4. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
-5. 把连击数字、`连击数_1.png`、`连击数_2.png` 与品质拾取框 PNG 放到客户端 `DragonCore/战斗视图/拾取视图/`；默认框使用白描两张图片。
-6. 如果要显示经验拾取，确认客户端有 `战斗视图/属性图标/经验加成图标.png`，并在 `config.yml` 里改 `pickup.experience`。
-7. 如果要显示金币拾取，确认客户端有 `战斗视图/属性图标/金币图标.png`，并在 `config.yml` 里改 `pickup.money`。
-8. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`combo.hud-name`、`pickup.hud-name` 与 DragonCore Gui 文件名一致。
-9. 使用 `/xybh info` 检查属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取、AkariLevel 经验桥、MythicMobs 金币桥和灵魂仓库拾取状态。
+4. 如果使用默认的 `dragoncore-headtag` 伤害渲染，把 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 放入 `plugins/DragonCore/HeadTag/`。
+5. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
+6. 把连击数字、`连击数_1.png`、`连击数_2.png` 与品质拾取框 PNG 放到客户端 `DragonCore/战斗视图/拾取视图/`；默认框使用白描两张图片。
+7. 如果要显示经验拾取，确认客户端有 `战斗视图/属性图标/经验加成图标.png`，并在 `config.yml` 里改 `pickup.experience`。
+8. 如果要显示金币拾取，确认客户端有 `战斗视图/属性图标/金币图标.png`，并在 `config.yml` 里改 `pickup.money`。
+9. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`display.renderer`、`display.headtag-marker`、`combo.hud-name`、`pickup.hud-name` 与 DragonCore 文件一致。
+10. 使用 `/xybh info` 检查伤害渲染、属性来源、AttributePlus 事件、龙核连击 HUD、龙核拾取、AkariLevel 经验桥、MythicMobs 金币桥和灵魂仓库拾取状态。
 
 默认字形采用已验证的艾尔字体字符：
 
@@ -63,11 +65,15 @@
 AttributePlus / Bukkit 伤害事件
         -> XyBattleHud 选择 damage type
         -> 数字 123 替换为配置字形
-        -> 服务端 ArmorStand CustomName
+        -> 服务端临时 ArmorStand 作为位置锚点
+        -> armorstand 模式：直接显示原版 CustomName
+        -> dragoncore-headtag 模式：CustomName 写入 XYBH_DAMAGE: 标记，由 DragonCore HeadTag label 显示
         -> 客户端字体系统把字符绘制为 PNG
 ```
 
 服务端不知道 PNG 的路径。DragonCore 在客户端已经注册了字符到图片的映射后，普通聊天、实体名和全息字里出现相同字符都会使用该图片字形。这就是插件无需 DragonCore API 也能显示图片数字的原因。
+
+如果使用 `display.renderer: 'dragoncore-headtag'`，XyBattleHud 会把实体原版名字隐藏，只保留 `display.headtag-marker` 标记给 DragonCore 识别。DragonCore 的 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 再用 `label` 组件显示去掉标记后的伤害字符，并设置 `shadow: false`，这样就不会出现字体图片后面的黑影。若临时不想用 DragonCore HeadTag，可以把 `display.renderer` 改回 `armorstand`。
 
 连击与伤害数字不同。连击需要固定在玩家屏幕某个位置，因此服务端通过 DragonCore `PacketSender.sendOpenHud` 打开 `XyBattleHud连击视图.yml`，再调用 HUD 里的 `更新连击` 函数。服务端只发送连击数量、是否暴击和显示时长；数字图片路径、位置和大小都由 DragonCore GUI 文件决定。
 
@@ -109,6 +115,13 @@ MythicMobs money 掉落
 ## 配置
 
 配置文件在 `plugins/XyBattleHud/config.yml`，每项都带中文注释。
+
+伤害飘字显示相关：
+
+- `display.renderer`：`dragoncore-headtag` 为无黑影模式，`armorstand` 为旧版原版名字模式。
+- `display.headtag-marker`：DragonCore HeadTag 用来识别伤害实体的前缀，默认 `XYBH_DAMAGE:`；修改后需要同步修改 HeadTag YML。
+- `display.height-offset`：伤害出现的高度，数值越大越高。
+- `display.float-speed`：每 tick 上浮速度，数值越小漂得越慢、越不容易飘太高。
 
 `damage-types` 中每个类型包含：
 
@@ -230,7 +243,7 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/X
 所有命令需要 `xybattlehud.admin`，默认为 OP。
 
 - `/xybh reload`：重新读取配置并重新连接可选依赖。
-- `/xybh info`：查看版本、属性来源、AP 事件桥、DragonCore 连击 HUD、DragonCore 拾取接口、AkariLevel 经验桥、XySoulSpace 拾取桥和当前显示数量。
+- `/xybh info`：查看版本、伤害渲染模式、属性来源、AP 事件桥、DragonCore 连击 HUD、DragonCore 拾取接口、AkariLevel 经验桥、XySoulSpace 拾取桥和当前显示数量。
 - `/xybh clear`：清除当前全部飘字。
 - `/xybh debug [on|off]`：临时输出每次伤害的数值、类型和 AP 消息。重载后恢复配置值。
 
@@ -243,9 +256,10 @@ XyCore 是软依赖，不能阻止 XyBattleHud 启动。它提供 `XyCore.get().
 ## 已知范围
 
 - 当前版本不包含怪物血条、原版伤害粒子压缩、玩家隐藏设置、权限字体组、ProtocolLib 虚拟实体或其他属性插件适配。
-- 伤害数字仍由原生 ArmorStand 显示，其可见距离由服务端实体追踪范围控制。
+- `armorstand` 模式下伤害数字由原生 ArmorStand 名字显示，会保留原版文字黑影。
+- `dragoncore-headtag` 模式下必须安装 DragonCore 并放入 `XyBattleHud伤害飘字.yml`，否则实体原版名字被隐藏后客户端看不到伤害数字。
 - 没有配置的小数点、千位分隔符会以原版字体显示，因此默认禁用小数和分组符号。
-- DragonCore 未安装或未成功启用时，伤害飘字仍可工作，但连击 HUD、拾取 HUD 和经验 HUD 不会显示。
+- DragonCore 未安装或未成功启用时，请把 `display.renderer` 改为 `armorstand`；连击 HUD、拾取 HUD 和经验/金币 HUD 不会显示。
 - XySoulSpace 未安装时不影响普通拾取提示；只是不显示灵魂仓库自动拾取入库提示。
 - AkariLevel 未安装或未成功启用时，不影响普通拾取和连击，只是不显示经验拾取提示。
 - MythicMobs 或 Vault 未安装时不影响普通拾取、经验和连击，只是不显示 MythicMobs money 金币提示。
@@ -258,7 +272,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.8.jar`。
+产物：`build/libs/XyBattleHud-1.3.9.jar`。
 
 ## 许可证
 

@@ -38,6 +38,7 @@ public final class BattleHudCommand implements CommandExecutor, TabCompleter {
                 return true;
             case "info":
                 sender.sendMessage(prefix() + ChatColor.WHITE + "v" + plugin.getDescription().getVersion()
+                        + ChatColor.GRAY + " | 伤害渲染: " + plugin.getSettings().getDamageRenderer().getConfigValue()
                         + ChatColor.GRAY + " | 属性来源: " + plugin.getAttributeReader().getName()
                         + " | AP事件: " + (plugin.getAttributePlusBridge().isAvailable() ? "可用" : "不可用")
                         + " | 龙核连击HUD: " + (plugin.getComboDisplays().isAvailable() ? "可用" : "不可用")
