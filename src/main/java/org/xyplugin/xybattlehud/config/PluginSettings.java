@@ -32,7 +32,7 @@ public final class PluginSettings {
         }
 
         private static DamageRenderer parse(String value) {
-            if (value == null) return ARMORSTAND;
+            if (value == null) return DRAGONCORE_HEADTAG;
             String normalized = value.trim().toLowerCase(LocaleHolder.ROOT);
             if ("dragoncore-headtag".equals(normalized) || "headtag".equals(normalized) || "dragoncore".equals(normalized)) {
                 return DRAGONCORE_HEADTAG;
@@ -65,7 +65,7 @@ public final class PluginSettings {
 
     private PluginSettings(FileConfiguration config) {
         durationTicks = Math.max(1, config.getInt("display.duration-ticks", 40));
-        damageRenderer = DamageRenderer.parse(config.getString("display.renderer", "armorstand"));
+        damageRenderer = DamageRenderer.parse(config.getString("display.renderer", "dragoncore-headtag"));
         String marker = config.getString("display.headtag-marker", "XYBH_DAMAGE:");
         headtagMarker = marker == null || marker.isEmpty() ? "XYBH_DAMAGE:" : marker;
         heightOffset = config.getDouble("display.height-offset", 0.45);

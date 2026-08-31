@@ -1,5 +1,20 @@
 # AI 使用记录
 
+## 1.3.10
+
+本次修改由 AI 根据服主反馈“HeadTag 文件已放入服务端但仍有黑影”辅助完成。
+
+已确认的实现边界：
+
+- v1.3.9 新配置默认是 `dragoncore-headtag`，但旧服务器已有 `config.yml` 不会被 jar 覆盖。
+- v1.3.9 代码缺省值仍是 `armorstand`，导致旧配置没手动新增 `display.renderer` 时仍使用原版名字显示。
+- v1.3.10 将代码缺省值改为 `dragoncore-headtag`，让旧配置不写该项时也自动进入去黑影模式。
+- 仍保留 `display.renderer: 'armorstand'` 作为手动回退方式。
+
+验证记录：
+
+- 已执行 `gradlew.bat clean test jar`，构建通过。
+
 ## 1.3.9
 
 本次修改由 AI 根据服主反馈“本机类似写法的字体漂浮似乎没有黑影，希望去除伤害字体黑影”辅助完成。

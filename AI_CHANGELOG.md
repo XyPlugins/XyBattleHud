@@ -2,6 +2,13 @@
 
 本文件记录 AI 参与的代码变更，供维护者审查和追溯。
 
+## 2026-09-01 - v1.3.10 伤害渲染缺省值修正
+
+- 根据服主实测反馈，定位到旧配置未新增 `display.renderer` 时，v1.3.9 代码仍按 `armorstand` 缺省加载。
+- 将 `PluginSettings` 中 `display.renderer` 的缺省值改为 `dragoncore-headtag`，并让 `DamageRenderer.parse(null)` 也返回 HeadTag 模式。
+- 保持显式 `display.renderer: 'armorstand'` 可用，方便无 DragonCore HeadTag 文件时临时回退。
+- 同步更新 README、CHANGELOG 与 AI 使用记录。
+
 ## 2026-09-01 - v1.3.9 伤害飘字去黑影
 
 - 根据服主反馈，确认当前伤害数字走 `ArmorStand#setCustomNameVisible(true)` 的原版名字渲染，因此黑影不受 DragonCore 字体 YML 控制。

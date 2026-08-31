@@ -39,7 +39,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.9.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.10.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 如果使用默认的 `dragoncore-headtag` 伤害渲染，把 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 放入 `plugins/DragonCore/HeadTag/`。
@@ -73,7 +73,7 @@ AttributePlus / Bukkit 伤害事件
 
 服务端不知道 PNG 的路径。DragonCore 在客户端已经注册了字符到图片的映射后，普通聊天、实体名和全息字里出现相同字符都会使用该图片字形。这就是插件无需 DragonCore API 也能显示图片数字的原因。
 
-如果使用 `display.renderer: 'dragoncore-headtag'`，XyBattleHud 会把实体原版名字隐藏，只保留 `display.headtag-marker` 标记给 DragonCore 识别。DragonCore 的 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 再用 `label` 组件显示去掉标记后的伤害字符，并设置 `shadow: false`，这样就不会出现字体图片后面的黑影。若临时不想用 DragonCore HeadTag，可以把 `display.renderer` 改回 `armorstand`。
+如果使用 `display.renderer: 'dragoncore-headtag'`，XyBattleHud 会把实体原版名字隐藏，只保留 `display.headtag-marker` 标记给 DragonCore 识别。DragonCore 的 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 再用 `label` 组件显示去掉标记后的伤害字符，并设置 `shadow: false`，这样就不会出现字体图片后面的黑影。v1.3.10 起，旧配置里没有写 `display.renderer` 时也会默认走 `dragoncore-headtag`；若临时不想用 DragonCore HeadTag，可以把 `display.renderer` 改回 `armorstand`。
 
 连击与伤害数字不同。连击需要固定在玩家屏幕某个位置，因此服务端通过 DragonCore `PacketSender.sendOpenHud` 打开 `XyBattleHud连击视图.yml`，再调用 HUD 里的 `更新连击` 函数。服务端只发送连击数量、是否暴击和显示时长；数字图片路径、位置和大小都由 DragonCore GUI 文件决定。
 
@@ -118,7 +118,7 @@ MythicMobs money 掉落
 
 伤害飘字显示相关：
 
-- `display.renderer`：`dragoncore-headtag` 为无黑影模式，`armorstand` 为旧版原版名字模式。
+- `display.renderer`：`dragoncore-headtag` 为无黑影模式，`armorstand` 为旧版原版名字模式；不写时默认 `dragoncore-headtag`。
 - `display.headtag-marker`：DragonCore HeadTag 用来识别伤害实体的前缀，默认 `XYBH_DAMAGE:`；修改后需要同步修改 HeadTag YML。
 - `display.height-offset`：伤害出现的高度，数值越大越高。
 - `display.float-speed`：每 tick 上浮速度，数值越小漂得越慢、越不容易飘太高。
@@ -272,7 +272,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.9.jar`。
+产物：`build/libs/XyBattleHud-1.3.10.jar`。
 
 ## 许可证
 

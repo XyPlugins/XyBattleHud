@@ -1,5 +1,11 @@
 # 更新记录
 
+## v1.3.10 - 2026-09-01
+
+- 修正旧 `config.yml` 没有 `display.renderer` 时仍回退到 `armorstand` 的问题。
+- 现在缺省渲染方式与默认配置保持一致：未填写 `display.renderer` 时自动使用 `dragoncore-headtag`。
+- 文档补充说明：需要退回原版名字显示时，手动填写 `display.renderer: 'armorstand'`。
+
 ## v1.3.9 - 2026-09-01
 
 - 新增 `display.renderer`，伤害飘字可在旧版 `armorstand` 和新版 `dragoncore-headtag` 之间切换。
