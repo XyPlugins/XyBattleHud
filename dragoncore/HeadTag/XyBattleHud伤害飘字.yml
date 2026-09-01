@@ -8,7 +8,7 @@
 
 # 匹配 XyBattleHud 创建的临时 ArmorStand 实体名。
 match:
-- XYBH_DAMAGE:
+- 'XYBH_DAMAGE:'
 contains: true
 display: always
 
