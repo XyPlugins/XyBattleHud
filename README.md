@@ -39,7 +39,7 @@
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.11.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.12.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 如果使用默认的 `dragoncore-headtag` 伤害渲染，把 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 放入 `plugins/DragonCore/HeadTag/`。
@@ -175,10 +175,10 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `position.right`：拾取框距离屏幕右边多少像素；数值越大越往左。
 - `position.bottom`：拾取框距离屏幕底部多少像素；数值越大越往上。
 - `animation.duration-millis`：单条拾取提示总显示时间。
-- `animation.fade-in-millis`：新提示淡入时间，稳定队列模式默认关闭。
+- `animation.fade-in-millis`：新提示淡入时间，默认 `150` 毫秒；旧配置的 `0` 自动按 `150` 处理，填 `-1` 完全关闭。
 - `animation.fade-out-millis`：提示消失前淡出时间，填 `0` 关闭淡出。
 - `animation.max-entries`：屏幕最多保留几条提示；新的在最下面，旧的向上叠。
-- `animation.stack-spacing`：每层之间的上下间距，单位像素；新版默认 `43`，HUD 会限制最低为 `43`，避免 `41` 像素高的背景重叠。
+- `animation.stack-spacing`：每层之间的上下间距，单位像素；当前 `80 x 18` 布局默认 `22`，旧默认值 `43` 会自动迁移为 `22`。
 - `animation.slide-pixels`：新提示从右侧滑入的距离，填 `0` 关闭滑入。
 - `animation.slide-speed`：新提示滑入速度，`1.0` 表示立即到位。
 - `animation.stack-move-speed`：旧提示被顶到上一层时的移动速度，稳定队列模式暂不使用。
@@ -206,11 +206,13 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 
 DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整整体位置时，改 `config.yml -> pickup.position.right/bottom`；统一背景、经验/金币图标和品质框路径在视图文件中修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
 
+拾取背景大小统一在 DragonCore 文件顶部 `布局.拾取框宽度/拾取框高度` 修改。品质框、物品、经验、金币和文字都会以背景左上角为锚点按比例缩放和定位，不需要再逐个改坐标。
+
 经验和金币图标大小、坐标在 DragonCore 视图里分开调：
 
 - `拾取经验图标`：只影响经验提示的图标。
 - `拾取金币图标`：只影响金币提示的图标。
-- `x` 中 `-169` 后面的加数越大越往右，`y` 中的加数越大越往下。
+- 图标坐标已经跟随 `布局` 自动计算；需要整体移动时使用服务端 `pickup.position`，不要单独修改每个组件的 `x/y`。
 - `width` / `height` 控制图标大小。
 
 ### 品质框
@@ -269,7 +271,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.11.jar`。
+产物：`build/libs/XyBattleHud-1.3.12.jar`。
 
 ## 许可证
 
