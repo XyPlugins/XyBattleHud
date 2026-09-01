@@ -17,10 +17,10 @@
 - 连击采用 DragonCore HUD，不使用 ArmorStand 名称，因此没有字体图片黑底，也不会跟随怪物漂浮。
 - 玩家拾取物品后可在右下角显示拾取框、真实物品图标、物品名和本次数量。
 - 拾取提示可配置屏幕位置、显示时长、淡入淡出、最大层数、层间距、滑入速度和上移速度。
-- 经验获得时可在右下角显示经验提示，显示名和图标都能在 `config.yml` 改，并固定使用头颅拾取框。
+- 经验获得时可在右下角显示经验提示，显示名和图标都能在 `config.yml` 修改。
 - 经验提示内置短时间去重，避免同一笔经验被等级插件重复抛出时显示两条。
 - MythicMobs `money` 掉落可显示金币提示，显示名和图标都能在 `config.yml` 改。
-- 兼容 XySoulSpace 自动拾取；普通背包拾取、灵魂空间拾取和物品品质可以选择不同拾取框。
+- 兼容 XySoulSpace 自动拾取；所有来源使用统一拾取背景，物品品质框独立叠加在左侧物品格。
 - 可用 AttributePlus 的本次属性触发事件、攻击消息、攻击者属性和原版下落暴击判断识别类型。
 - 可选接入 XyCore 的 `AttributeService`；未安装 XyCore 时会直接读取 AttributePlus API，二者都不存在时仍可显示普通伤害与原版暴击。
 - 支持第三方通过实体 metadata `xybattlehud.damage-type` 指定已配置类型。
@@ -32,19 +32,19 @@
 - 可选：AttributePlus，默认属性来源。
 - 可选：XyCore。仅作为稳定的 AttributePlus 读取桥，不是硬依赖。
 - DragonCore：伤害字体映射本身不要求服务端 API；启用伤害 HeadTag 去黑影、连击 HUD 和拾取 HUD 时必须安装。
-- 可选：XySoulSpace。启用自动拾取入库时，本插件会软监听其 `XySoulSpaceItemDepositEvent`。
+- 可选：XySoulSpace。灵魂入库监听 `XySoulSpaceItemDepositEvent`；1.1.17起的背包直投监听 `XySoulSpaceItemInventoryDeliveryEvent`。
 - 可选：AkariLevel。启用经验拾取时，本插件会软监听其经验变更事件。
 - 可选：MythicMobs + Vault。启用金币拾取时，本插件会软监听 MythicMobs 的 money 掉落事件。
 - 客户端：DragonCore 字体配置、伤害数字 PNG、连击 PNG 和拾取框 PNG。
 
 ## 安装
 
-1. 将 `XyBattleHud-1.3.10.jar` 放入服务端 `plugins` 目录并重启。
+1. 将 `XyBattleHud-1.3.11.jar` 放入服务端 `plugins` 目录并重启。
 2. 将 DragonCore 安装到服务端和玩家客户端。DragonCore `2.6.2.9` 在 1.12.2 服务端建议使用 Java 8。
 3. 将 DragonCore 字体定义和 PNG 放入客户端实际加载的资源目录。
 4. 如果使用默认的 `dragoncore-headtag` 伤害渲染，把 [XyBattleHud伤害飘字.yml](dragoncore/HeadTag/XyBattleHud伤害飘字.yml) 放入 `plugins/DragonCore/HeadTag/`。
 5. 将 [XyBattleHud连击视图.yml](dragoncore/XyBattleHud连击视图.yml) 和 [XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml) 放入 `plugins/DragonCore/Gui/`。
-6. 把连击数字、`连击数_1.png`、`连击数_2.png` 与品质拾取框 PNG 放到客户端 `DragonCore/战斗视图/拾取视图/`；默认框使用白描两张图片。
+6. 把 `拾取框.png` 放到客户端 `DragonCore/战斗视图/拾取视图/`；ItemEffect 的七个品质 GIF 保持位于 `DragonCore/icon/品质框/`。
 7. 如果要显示经验拾取，确认客户端有 `战斗视图/属性图标/经验加成图标.png`，并在 `config.yml` 里改 `pickup.experience`。
 8. 如果要显示金币拾取，确认客户端有 `战斗视图/属性图标/金币图标.png`，并在 `config.yml` 里改 `pickup.money`。
 9. 确认 [config.yml](src/main/resources/config.yml) 中 `digits` 字符、`display.renderer`、`display.headtag-marker`、`combo.hud-name`、`pickup.hud-name` 与 DragonCore 文件一致。
@@ -84,9 +84,9 @@ AttributePlus / Bukkit 伤害事件
         -> 客户端 HUD 固定显示数字图片 + 连击数图片
 ```
 
-拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`。当前资源包基础白描框文件名与视觉相反，所以未匹配品质时会兼容反向套用；命中品质后按文件名正常选择，普通背包使用 `品质普通拾取框N`，灵魂空间使用 `品质灵魂拾取框N`。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
+拾取视图也不同于伤害数字。XyBattleHud 会把本次拾取的 `ItemStack` 发到 DragonCore 客户端临时物品缓存，再调用 HUD 里的 `创建拾取` 函数。普通背包拾取会传入 `normal`，自动进入灵魂空间会传入 `soul`；新版 HUD 的两种来源共用 `拾取框.png`。HUD 会在物品名称和 Lore 中匹配 ItemEffect 的七个品质词，命中后只在左侧物品格叠加对应品质 GIF；未匹配时不创建品质框。`slot` 组件根据缓存 key 渲染真实物品图标，文字组件读取物品名并拼接 `+数量`。
 
-经验拾取不走物品缓存。XyBattleHud 监听 AkariLevel 的经验变更事件，拿到本次增加的经验值后，把可配置的经验名称和图标路径发给 DragonCore HUD。经验来源固定使用头颅拾取框，不参与物品品质框匹配。
+经验拾取不走物品缓存。XyBattleHud 监听 AkariLevel 的经验变更事件，拿到本次增加的经验值后，把可配置的经验名称和图标路径发给 DragonCore HUD。经验使用统一拾取背景，不参与物品品质框匹配。
 
 金币拾取也不走物品缓存。MythicMobs 的 `money 10 1` 会通过 Vault 给击杀者发钱，XyBattleHud 只监听 MythicMobs 的本次 money 掉落事件，拿到金币数量后发给 DragonCore HUD。它不会监听 Vault 余额变化，所以商店、转账、指令发钱不会弹拾取框。
 
@@ -95,7 +95,8 @@ PlayerPickupItemEvent / XySoulSpaceItemDepositEvent
         -> XyBattleHud 计算本次拾取数量
         -> DragonCore putClientSlotItem 缓存 ItemStack
         -> 调用 XyBattleHud拾取视图.yml 的 创建拾取(来源)
-        -> 客户端 HUD 根据 normal/soul 和物品品质显示对应拾取框、图标、名称、数量
+        -> 客户端 HUD 显示统一背景，并按物品品质选择性叠加品质框
+        -> 显示物品图标、名称和数量
 ```
 
 ```text
@@ -167,7 +168,7 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 
 - `enabled`：是否启用右下角拾取提示。
 - `soul-space-enabled`：是否显示 XySoulSpace 自动拾取入库提示；关闭后不会显示灵魂空间入库提示。
-- `soul-space-frame-enabled`：是否使用灵魂空间专用拾取框；关闭后灵魂空间入库仍会提示，但改用普通拾取框。
+- `soul-space-frame-enabled`：是否保留灵魂空间来源标记；新版统一背景暂时不产生视觉差异，用于兼容旧 HUD。
 - `hud-name`：DragonCore GUI/HUD 文件名，不写 `.yml`。
 - `function-name`：HUD 中创建拾取框的函数名，默认 `创建拾取`。
 - `cache-prefix`：DragonCore 临时物品缓存前缀，一般不改。
@@ -177,7 +178,7 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `animation.fade-in-millis`：新提示淡入时间，稳定队列模式默认关闭。
 - `animation.fade-out-millis`：提示消失前淡出时间，填 `0` 关闭淡出。
 - `animation.max-entries`：屏幕最多保留几条提示；新的在最下面，旧的向上叠。
-- `animation.stack-spacing`：每层之间的上下间距，单位像素；多条提示挤在一起时调大，默认 `25`。
+- `animation.stack-spacing`：每层之间的上下间距，单位像素；新版默认 `43`，HUD 会限制最低为 `43`，避免 `41` 像素高的背景重叠。
 - `animation.slide-pixels`：新提示从右侧滑入的距离，填 `0` 关闭滑入。
 - `animation.slide-speed`：新提示滑入速度，`1.0` 表示立即到位。
 - `animation.stack-move-speed`：旧提示被顶到上一层时的移动速度，稳定队列模式暂不使用。
@@ -201,42 +202,38 @@ DragonCore 视觉文件在 [dragoncore/XyBattleHud连击视图.yml](dragoncore/X
 - `money.icon`：金币提示图标路径。
 - `money.dedupe-millis`：同一只怪同一笔 money 掉落短时间内只显示一次，默认 `250`；填 `0` 关闭。
 
-普通背包拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace 自动拾取会取消原拾取事件或直接移除地面物品，因此本插件额外软监听它的 `XySoulSpaceItemDepositEvent`，只处理 `source=pickup` 的入库。
+普通地面拾取使用 1.12.2 的 `PlayerPickupItemEvent`，本次数量按 `掉落堆数量 - event.getRemaining()` 计算。XySoulSpace个人开关开启时，MM掉落直入灵魂空间并通过 `XySoulSpaceItemDepositEvent` 显示灵魂空间来源提示；个人开关关闭时，实际进入背包的数量通过 `XySoulSpaceItemInventoryDeliveryEvent` 显示普通来源提示。两种来源在新版 HUD 中共用统一背景。背包溢出后落地的余量以后被真实捡起时仍走Bukkit事件，不会把未获得数量提前显示。
 
-DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整整体位置时，改 `config.yml -> pickup.position.right/bottom`；普通框、灵魂空间框、经验图标和品质框路径都在文件顶部 `图片` 段修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
+DragonCore 视觉文件在 [dragoncore/XyBattleHud拾取视图.yml](dragoncore/XyBattleHud拾取视图.yml)。需要调整整体位置时，改 `config.yml -> pickup.position.right/bottom`；统一背景、经验/金币图标和品质框路径在视图文件中修改。拾取队列会把新提示放在最下面，旧提示逐层上移，并按各自的创建时间独立淡出。
 
 经验和金币图标大小、坐标在 DragonCore 视图里分开调：
 
 - `拾取经验图标`：只影响经验提示的图标。
 - `拾取金币图标`：只影响金币提示的图标。
-- `x` 中最后的 `+4` 越大越往右，`y` 中的 `+4` 越大越往下。
+- `x` 中 `-169` 后面的加数越大越往右，`y` 中的加数越大越往下。
 - `width` / `height` 控制图标大小。
 
-### 品质拾取框
+### 品质框
 
-品质判断沿用你提供的 `通用.yml`：
+品质判断与新版 `ItemEffect.yml` 前七项一致：
 
-- `品质判断词0-10`：在物品名称或 Lore 中查找的关键词。
-- `品质普通拾取框0-10`：匹配后、进入玩家背包时使用的 PNG 路径。
-- `品质灵魂拾取框0-10`：匹配后、自动进入灵魂空间时使用的 PNG 路径。
-- 当前客户端资源包里基础白描框文件名与视觉相反，所以未匹配品质时会兼容反向套用。
-- 带品质的框按文件名正常选择：普通背包显示 `品质普通拾取框N`，灵魂空间显示 `品质灵魂拾取框N`。
-- 匹配从 `10` 到 `0` 执行，数字越大优先级越高。
-- `品质拾取框启用: false` 时只按普通/灵魂空间来源选择框。
-- 当前已写入白描、萌黄、气象、极意、归元、传神、浮世两套图片路径；待锻造复用白描框。
-- 未匹配品质词、或某个来源的品质图片路径留空时，回退到默认白描框或白描灵魂框。
+- `品质判断词0-6`：在物品名称或 Lore 中查找白描、传神、浮世、极意、气象、青痕、石墨。
+- `品质框0-6`：匹配后叠加在左侧物品格的 GIF 路径。
+- `品质框启用: false`：完全关闭品质框，但不影响背景、物品图标和文字。
+- 未匹配任何品质词时，品质路径保持为空，不创建品质框，不使用默认白框。
+- 普通背包和灵魂空间使用相同品质框，不再维护两套整张拾取背景。
 
 示例：
 
 ```yml
 图片:
-  品质拾取框启用: true
-  品质判断词1: 白描
-  品质普通拾取框1: 战斗视图/拾取视图/白描拾取框.png
-  品质灵魂拾取框1: 战斗视图/拾取视图/白描灵魂拾取框.png
+  拾取框: 战斗视图/拾取视图/拾取框.png
+  品质框启用: true
+  品质判断词0: 白描
+  品质框0: icon/品质框/白描.gif
 ```
 
-品质图片需要由客户端资源包提供；服务端不会读取客户端 PNG，也不会解析物品插件的私有 NBT。
+背景和品质图片需要由客户端资源包提供；服务端不会读取客户端图片，也不会解析物品插件的私有 NBT。
 
 ## 命令
 
@@ -272,7 +269,7 @@ Windows：
 .\gradlew.bat clean test jar
 ```
 
-产物：`build/libs/XyBattleHud-1.3.10.jar`。
+产物：`build/libs/XyBattleHud-1.3.11.jar`。
 
 ## 许可证
 

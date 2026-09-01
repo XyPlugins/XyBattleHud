@@ -23,23 +23,37 @@ public final class SoulSpacePickupBridge implements Listener {
     public void register() {
         HandlerList.unregisterAll(this);
         available = false;
-        if (!plugin.getSettings().getPickup().isEnabled()
-                || !plugin.getSettings().getPickup().isSoulSpaceEnabled()) return;
+        if (!plugin.getSettings().getPickup().isEnabled()) return;
         Plugin soulSpace = plugin.getServer().getPluginManager().getPlugin("XySoulSpace");
         if (soulSpace == null || !soulSpace.isEnabled()) return;
+        boolean registered = false;
+        if (plugin.getSettings().getPickup().isSoulSpaceEnabled()) {
+            registered |= registerEvent(soulSpace,
+                    "org.xyplugin.xysoulspace.api.XySoulSpaceItemDepositEvent", this::onDeposit);
+        }
+        registered |= registerEvent(soulSpace,
+                "org.xyplugin.xysoulspace.api.XySoulSpaceItemInventoryDeliveryEvent",
+                this::onInventoryDelivery);
+        available = registered;
+    }
+
+    private boolean registerEvent(Plugin soulSpace, String className, EventExecutor executor) {
         try {
             @SuppressWarnings("unchecked")
             Class<? extends Event> eventClass = (Class<? extends Event>) Class.forName(
-                    "org.xyplugin.xysoulspace.api.XySoulSpaceItemDepositEvent", true,
+                    className, true,
                     soulSpace.getClass().getClassLoader()).asSubclass(Event.class);
-            EventExecutor executor = this::onDeposit;
             plugin.getServer().getPluginManager().registerEvent(eventClass, this, EventPriority.MONITOR,
                     executor, plugin, true);
-            available = true;
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
         } catch (Throwable failure) {
             if (plugin.isDebugEnabled()) {
-                plugin.getLogger().warning("未接入 XySoulSpace 拾取事件: " + failure.getMessage());
+                plugin.getLogger().warning("未接入 XySoulSpace 拾取事件 " + className + ": "
+                        + failure.getMessage());
             }
+            return false;
         }
     }
 
@@ -51,6 +65,14 @@ public final class SoulSpacePickupBridge implements Listener {
         if (!(player instanceof Player) || !(item instanceof ItemStack)) return;
         ItemStack stack = (ItemStack) item;
         plugin.getPickupDisplays().showSoulSpace((Player) player, stack, stack.getAmount());
+    }
+
+    private void onInventoryDelivery(Listener ignored, Event event) {
+        Object player = invoke(event, "getPlayer");
+        Object item = invoke(event, "getItem");
+        if (!(player instanceof Player) || !(item instanceof ItemStack)) return;
+        ItemStack stack = (ItemStack) item;
+        plugin.getPickupDisplays().show((Player) player, stack, stack.getAmount());
     }
 
     private Object invoke(Object target, String name) {
