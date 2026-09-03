@@ -17,7 +17,7 @@ public final class PickupAnimationSettings {
         fadeInMillis = clamp(config.getInt("pickup.animation.fade-in-millis", 0), 0, durationMillis);
         fadeOutMillis = clamp(config.getInt("pickup.animation.fade-out-millis", 600), 0, durationMillis);
         maxEntries = clamp(config.getInt("pickup.animation.max-entries", 5), 1, 20);
-        stackSpacing = clamp(config.getInt("pickup.animation.stack-spacing", 25), 1, 200);
+        stackSpacing = clamp(config.getInt("pickup.animation.stack-spacing", 30), 1, 200);
         slidePixels = clamp(config.getInt("pickup.animation.slide-pixels", 50), 0, 500);
         slideSpeed = clamp(config.getDouble("pickup.animation.slide-speed", 0.08), 0.01, 1.0);
         stackMoveSpeed = clamp(config.getDouble("pickup.animation.stack-move-speed", 0.35), 0.01, 1.0);

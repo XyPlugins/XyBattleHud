@@ -1,5 +1,24 @@
 # AI 使用记录
 
+## 1.3.13
+
+本次修改由 AI 根据服主提供的当前实服 `config.yml` 和 `XyBattleHud拾取视图.yml` 辅助完成。
+
+已确认的实现边界：
+
+- 服主当前配置值被保留为默认：`pickup.position.right: 100`、`pickup.animation.stack-spacing: 30`、拾取框 `90 x 17`。
+- DragonCore 拾取视图不再让物品、品质框、经验和金币图标按背景宽高比例缩放。
+- `布局` 段新增独立的框内坐标与大小字段；物品默认 `13 x 13`，以后改背景大小不会把物品拉成长方形。
+- 服务端代码缺省值同步为 `right: 100` 和 `stack-spacing: 30`。
+- 本次不改拾取事件、XySoulSpace 来源判断、经验去重或金币去重逻辑。
+
+验证记录：
+
+- `gradlew.bat clean test build --no-daemon` 已通过，共 11 项测试，失败 0、错误 0、跳过 0。
+- `config.yml` 与 `XyBattleHud拾取视图.yml` 已通过 SnakeYAML 1.19 解析。
+- JAR 内版本为 `1.3.13`，主类字节码为 Java 8（major 52）。
+- 构建 SHA-256：`0F498D28764086A2BA6EBE503DF30EF7F2F7BE9883B3C9F8DF53BAB3A3E3D777`。
+
 ## 1.3.12
 
 本次修改由 AI 根据服主提供的实服截图和当前服务器 `XyBattleHud拾取视图.yml` 辅助完成。

@@ -25,7 +25,7 @@ public final class PickupSettings {
         hudName = nonEmpty(config.getString("pickup.hud-name"), "XyBattleHud拾取视图");
         functionName = nonEmpty(config.getString("pickup.function-name"), "创建拾取");
         cachePrefix = nonEmpty(config.getString("pickup.cache-prefix"), "xybh_pickup_item_");
-        rightOffset = clamp(config.getInt("pickup.position.right", 8), 1, 2000);
+        rightOffset = clamp(config.getInt("pickup.position.right", 100), 1, 2000);
         bottomOffset = clamp(config.getInt("pickup.position.bottom", 74), 1, 2000);
     }
 
