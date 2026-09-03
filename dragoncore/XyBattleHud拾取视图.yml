@@ -1,7 +1,7 @@
 # XyBattleHud 拾取视图
 # 放置位置：plugins/DragonCore/Gui/XyBattleHud拾取视图.yml
 # 背景图片：DragonCore/战斗视图/拾取视图/拾取框.png
-# 品质框图片沿用 ItemEffect.yml，叠加在背景左侧物品格内。
+# 如果 ItemEffect.yml 已经对 HUD 物品槽绘制品质框，这里不要再绘制，避免双框。
 # 服务端插件负责发送物品缓存、来源和调用“创建拾取”；这里负责右下角显示。
 # 位置由 XyBattleHud config.yml -> pickup.position 控制。
 # 淡出、堆叠层数和层间距由 XyBattleHud config.yml -> pickup.animation 控制。
@@ -14,9 +14,10 @@ match: hud
   # 新版统一拾取背景，原图尺寸为 169 x 41。
   拾取框: 战斗视图/拾取视图/拾取框.png
 
-  # 是否根据物品名称或 Lore 叠加品质框。
-  # 关闭后仍显示物品，只是不显示左侧品质框。
-  品质框启用: true
+  # 是否由本拾取视图额外绘制品质框。
+  # 你的 ItemEffect.yml 已经会同时作用于 HUD、背包和 ItemTip，所以这里默认关闭，避免出现两个品质框。
+  # 如果以后不用 ItemEffect 绘制 HUD 品质框，再改成 true。
+  品质框启用: false
 
   # 以下七项与 ItemEffect.yml 前七项保持一致。
   # 没有匹配到任何判断词时，品质框路径保持为空，不显示品质框。

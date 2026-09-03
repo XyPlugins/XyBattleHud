@@ -1,5 +1,11 @@
 # 更新记录
 
+## v1.3.14 - 2026-09-03
+
+- 根据服主实服截图确认 `ItemEffect.yml` 已经会同时作用于 HUD、背包和 ItemTip，拾取视图再绘制品质框会导致双框。
+- `XyBattleHud拾取视图.yml` 默认将 `图片.品质框启用` 改为 `false`，当前服由 ItemEffect 统一给 HUD 物品槽套品质框。
+- 保留 XyBattleHud 内置品质框作为备用；没有使用 ItemEffect HUD 品质框的服务器可手动改回 `true`。
+
 ## v1.3.13 - 2026-09-03
 
 - 采用服主提供的当前实服 `config.yml` 和 `XyBattleHud拾取视图.yml` 作为基准，默认 `pickup.position.right` 为 `100`，默认 `stack-spacing` 为 `30`。

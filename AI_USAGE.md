@@ -1,5 +1,23 @@
 # AI 使用记录
 
+## 1.3.14
+
+本次修改由 AI 根据服主提供的实服截图和 `ItemEffect.yml` 辅助完成。
+
+已确认的实现边界：
+
+- `ItemEffect.yml` 顶部注明前七项会同时作用于 HUD、背包和 ItemTip，因此 XyBattleHud 拾取视图继续额外创建 `拾取品质框` 会产生双框。
+- 当前推荐方案是：XyBattleHud 只负责拾取背景、物品槽、文字、经验和金币；品质框交给 ItemEffect 的全局物品槽规则绘制。
+- `图片.品质框启用` 默认改为 `false`；备用品质框逻辑、判断词和路径保留，方便没有 ItemEffect HUD 品质框时手动打开。
+- 本次不改拾取事件、物品缓存、XySoulSpace 来源判断、经验或金币逻辑。
+
+验证记录：
+
+- `gradlew.bat clean test build --no-daemon` 已通过，共 11 项测试，失败 0、错误 0、跳过 0。
+- `config.yml` 与 `XyBattleHud拾取视图.yml` 已通过 SnakeYAML 1.19 解析。
+- JAR 内版本为 `1.3.14`，主类字节码为 Java 8（major 52）。
+- 构建 SHA-256：`7FE7014D6BE8807A6F3A870C61E8BC8FDB1A7D1095E94FA892CC56D57A8786EA`。
+
 ## 1.3.13
 
 本次修改由 AI 根据服主提供的当前实服 `config.yml` 和 `XyBattleHud拾取视图.yml` 辅助完成。
